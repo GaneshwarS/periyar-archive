@@ -80,7 +80,7 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
 <script src="/pagefind/pagefind-ui.js"></script>
 <script>
   window.addEventListener('DOMContentLoaded', () => {
-    new PagefindUI({ element: "#search", showImages: false });
+    new PagefindUI({ element: "#search", showImages: false, highlightParam: "highlight" });
   });
 </script>
 <hr>
