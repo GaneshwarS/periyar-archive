@@ -42,8 +42,10 @@ for folder_path, collection_name in collections.items():
 <head>
 <meta charset="UTF-8">
 <title>{slug} — {collection_name}</title>
-<script src="/pagefind/pagefind-highlight.js"></script>
-<script>window.addEventListener("DOMContentLoaded", () => {{ new PagefindHighlight({{ highlightParam: "highlight" }}); }});</script>
+<script type="module">
+import {{ PagefindHighlight }} from "/pagefind/pagefind-highlight.js";
+new PagefindHighlight({{ highlightParam: "highlight" }});
+</script>
 </head>
 <h1>{slug}</h1>
 <p><em>Collection: {collection_name}</em></p>
