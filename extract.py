@@ -49,7 +49,7 @@ window.addEventListener("DOMContentLoaded", () => {{
   if (term) {{
     const banner = document.createElement("div");
     banner.style.cssText = "background:#fff3cd;padding:12px 20px;border-bottom:1px solid #ccc;font-family:sans-serif;font-size:15px;";
-    banner.innerHTML = "🔍 Press <strong>Ctrl+F</strong> (or Cmd+F on Mac) and search for: <strong>" + term + "</strong>";
+    banner.innerHTML = "🔍 Use <strong>Ctrl+F</strong> (or Cmd+F on Mac) to find your search term on this page.";
     document.body.insertBefore(banner, document.body.firstChild);
   }}
 }});
