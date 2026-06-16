@@ -3,9 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <title>1930-2-ocr — Kolathur Mani – Kudi Arasu Collection</title>
-<script type="module">
-import { PagefindHighlight } from "/pagefind/pagefind-highlight.js";
-new PagefindHighlight({ highlightParam: "highlight" });
+<script>
+window.addEventListener("DOMContentLoaded", () => {
+  const params = new URLSearchParams(window.location.search);
+  const term = params.get("highlight");
+  if (term) {
+    const banner = document.createElement("div");
+    banner.style.cssText = "background:#fff3cd;padding:12px 20px;border-bottom:1px solid #ccc;font-family:sans-serif;font-size:15px;";
+    banner.innerHTML = "🔍 Press <strong>Ctrl+F</strong> (or Cmd+F on Mac) and search for: <strong>" + term + "</strong>";
+    document.body.insertBefore(banner, document.body.firstChild);
+  }
+});
 </script>
 </head>
 <h1>1930-2-ocr</h1>
