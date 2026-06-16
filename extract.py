@@ -45,7 +45,7 @@ for folder_path, collection_name in collections.items():
 <script>
 window.addEventListener("DOMContentLoaded", () => {{
   const params = new URLSearchParams(window.location.search);
-  const term = params.get("highlight");
+  const term = decodeURIComponent(params.get("highlight") || "");
   if (term) {{
     const banner = document.createElement("div");
     banner.style.cssText = "background:#fff3cd;padding:12px 20px;border-bottom:1px solid #ccc;font-family:sans-serif;font-size:15px;";
