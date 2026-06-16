@@ -8,9 +8,6 @@ for filename in os.listdir(docs_dir):
     filepath = os.path.join(docs_dir, filename)
     with open(filepath, "r", encoding="utf-8") as f:
         content = f.read()
-    if "PagefindHighlight" in content:
-        print(f"Already has initialisation: {filename}")
-        continue
     content = content.replace(
         '<script src="/pagefind/pagefind-highlight.js"></script>',
         '<script src="/pagefind/pagefind-highlight.js"></script>\n<script>window.addEventListener("DOMContentLoaded", () => { new PagefindHighlight({ highlightParam: "highlight" }); });</script>'
