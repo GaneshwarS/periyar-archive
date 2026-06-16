@@ -47,7 +47,7 @@ for folder_path, collection_name in collections.items():
 <h1>{slug}</h1>
 <p><em>Collection: {collection_name}</em></p>
 <div id="content">
-<pre>{safe_text}</pre>
+<div id="content" style="white-space: pre-wrap; font-family: sans-serif;">{safe_text}</div>
 </div>
 </body>
 </html>"""
