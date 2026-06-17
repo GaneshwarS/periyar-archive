@@ -34,7 +34,6 @@ for folder_path, collection_name in collections.items():
         out_filename = f"{collection_slug}-{slug}.html"
         out_path = os.path.join("docs", out_filename)
 
-        # Escape any characters that would break HTML
         safe_text = full_text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
         html = f"""<!DOCTYPE html>
@@ -49,17 +48,19 @@ window.addEventListener("DOMContentLoaded", () => {{
   if (term) {{
     const banner = document.createElement("div");
     banner.style.cssText = "background:#fff3cd;padding:12px 20px;border-bottom:1px solid #ccc;font-family:sans-serif;font-size:15px;";
-    banner.innerHTML = "🔍 Use <strong>Ctrl+F</strong> (or Cmd+F on Mac) to find your search term on this page.";
+    banner.innerHTML = "&#128269; Use <strong>Ctrl+F</strong> (or Cmd+F on Mac) to find your search term on this page.";
     document.body.insertBefore(banner, document.body.firstChild);
   }}
 }});
 </script>
 </head>
+<body>
+<div style="margin-bottom:15px;">
+<a href="/" style="text-decoration:none;background:#f0f0f0;padding:6px 14px;border-radius:4px;font-family:sans-serif;font-size:14px;">&#8592; Home</a>
+</div>
 <h1>{slug}</h1>
 <p><em>Collection: {collection_name}</em></p>
-<div id="content">
 <div id="content" style="white-space: pre-wrap; font-family: sans-serif;">{safe_text}</div>
-</div>
 </body>
 </html>"""
 
@@ -81,14 +82,13 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
   body { font-family: sans-serif; max-width: 860px; margin: 40px auto; padding: 0 20px; }
   h1 { font-size: 1.6em; }
   #search { margin: 30px 0; }
+  #browse-heading { cursor: pointer; }
+  #browse-heading:hover { color: #333; }
 </style>
 </head>
 <body>
 <h1>பெரியார் தேடகம் — Periyar Archive</h1>
 <p>Search across the collected volumes of Periyar's writings published by V Anaimuthu (1974 edition) and the Kudi Arasu and Revolt collections published by Kolathur Mani.</p>
-<div id="search"></div>
-<p><strong>Note for Tamil searches:</strong> The search may return words sharing similar characters. For example, a search for "மானம்" might also return results including "மேன்மை".</p>
-<p>For questions or feedback, write to: <a href="mailto:ganeshwarbaarath@gmail.com">ganeshwarbaarath@gmail.com</a></p>
 <div id="search"></div>
 <script src="/pagefind/pagefind-ui.js"></script>
 <script>
@@ -96,13 +96,30 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
     new PagefindUI({ element: "#search", showImages: false, highlightParam: "highlight" });
   });
 </script>
+<p><strong>Note for Tamil searches:</strong> The search may return words sharing similar characters. For example, a search for "மானம்" might also return results including "மேன்மை".</p>
+<p>For questions or feedback, write to: <a href="mailto:ganeshwarbaarath@gmail.com">ganeshwarbaarath@gmail.com</a></p>
 <hr>
-<h2>Browse Documents</h2>
-<ul>
+<h2 id="browse-heading">&#9654; Browse Documents <small style="font-size:0.6em;font-weight:normal;">click to expand</small></h2>
+<ul id="browse-list" style="display:none;">
 """)
     for out_filename, slug, collection_name in index_links:
         f.write(f'<li><a href="{out_filename}">{slug}</a> <small>({collection_name})</small></li>\n')
-    f.write("</ul>\n</body>\n</html>")
+    f.write("""</ul>
+<script>
+document.getElementById("browse-heading").addEventListener("click", function() {
+  const list = document.getElementById("browse-list");
+  const heading = document.getElementById("browse-heading");
+  if (list.style.display === "none") {
+    list.style.display = "block";
+    heading.innerHTML = "&#9660; Browse Documents <small style=\\"font-size:0.6em;font-weight:normal;\\">click to collapse</small>";
+  } else {
+    list.style.display = "none";
+    heading.innerHTML = "&#9654; Browse Documents <small style=\\"font-size:0.6em;font-weight:normal;\\">click to expand</small>";
+  }
+});
+</script>
+</body>
+</html>""")
 
 print("\nAll done. HTML files are in the docs/ folder.")
 print(f"Total documents processed: {len(index_links)}")
