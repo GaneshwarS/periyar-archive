@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>பெரியார் தேடகம் — Periyar Archive</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@400;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
+<link href="/pagefind/pagefind-ui.css" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Serif Tamil', 'Noto Serif', serif;
+    background: #111;
+    color: #eee;
+  }
+  header {
+    background: #111;
+    color: #fff;
+    padding: 28px 30px;
+    text-align: center;
+    border-bottom: 2px solid #cc0000;
+  }
+  header h1 {
+    font-size: 1.5em;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+  header p {
+    font-size: 0.85em;
+    color: #aaa;
+    margin-top: 6px;
+    font-family: sans-serif;
+  }
+  .main {
+    max-width: 780px;
+    margin: 40px auto;
+    padding: 0 24px;
+  }
+  .description {
+    font-size: 0.95em;
+    color: #aaa;
+    line-height: 1.7;
+    margin-bottom: 28px;
+    font-family: sans-serif;
+  }
+  :root {
+    --pagefind-ui-scale: 1;
+    --pagefind-ui-primary: #cc0000;
+    --pagefind-ui-text: #eee;
+    --pagefind-ui-background: #1e1e1e;
+    --pagefind-ui-border: #444;
+    --pagefind-ui-tag: #222;
+    --pagefind-ui-border-width: 1px;
+    --pagefind-ui-border-radius: 3px;
+    --pagefind-ui-font: sans-serif;
+  }
+  #search { margin-bottom: 20px; }
+  .notes {
+    font-family: sans-serif;
+    font-size: 0.85em;
+    color: #aaa;
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+  .notes strong { color: #eee; }
+  .contact {
+    font-family: sans-serif;
+    font-size: 0.85em;
+    color: #aaa;
+    margin-bottom: 32px;
+  }
+  .contact a { color: #aaa; text-decoration: underline; }
+  .contact a:hover { color: #eee; }
+  hr { border: none; border-top: 1px solid #333; margin-bottom: 24px; }
+  #browse-heading {
+    cursor: pointer;
+    font-size: 1em;
+    font-family: sans-serif;
+    font-weight: 600;
+    color: #eee;
+    margin-bottom: 12px;
+    user-select: none;
+  }
+  #browse-heading:hover { color: #cc0000; }
+  #browse-list {
+    list-style: none;
+    font-family: sans-serif;
+    font-size: 0.9em;
+  }
+  #browse-list li {
+    padding: 6px 0;
+    border-bottom: 1px solid #222;
+  }
+  #browse-list a { color: #ccc; text-decoration: none; }
+  #browse-list a:hover { color: #cc0000; }
+  #browse-list small { color: #666; }
+</style>
+</head>
+<body>
+<header>
+  <h1>பெரியார் தேடகம் — Periyar Archive</h1>
+  <p>A full-text searchable archive of Periyar E.V. Ramasamy's writings</p>
+</header>
+<div class="main">
+  <p class="description" style="margin-top:28px;">Search across the collected volumes of Periyar's writings published by V Anaimuthu (1974 edition) and the Kudi Arasu and Revolt collections published by Kolathur Mani.</p>
+  <div id="search"></div>
+  <script src="/pagefind/pagefind-ui.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      new PagefindUI({
+        element: "#search",
+        showImages: false,
+        highlightParam: "highlight",
+        translations: {
+          placeholder: "Search",
+          clear_search: "Clear",
+          load_more: "Load more results",
+          search_label: "Search this archive",
+          filters_label: "Filters",
+          zero_results: "No results for [SEARCH_TERM]",
+          many_results: "[COUNT] results for [SEARCH_TERM]",
+          one_result: "[COUNT] result for [SEARCH_TERM]",
+          alt_search: "No results for [SEARCH_TERM]. Showing results for [DIFFERENT_TERM] instead",
+          search_suggestion: "No results for [SEARCH_TERM]. Try one of the following searches:",
+          searching: "Searching for [SEARCH_TERM]..."
+        }
+      });
+    });
+  </script>
+  <p class="notes"><strong>Note for Tamil searches:</strong> The search may return words sharing similar characters. For example, a search for "மானம்" might also return results including "மேன்மை".</p>
+  <p class="contact">For questions or feedback: <a href="mailto:ganeshwarbaarath@gmail.com">ganeshwarbaarath@gmail.com</a></p>
+  <hr>
+  <h2 id="browse-heading">&#9654; Browse Documents <small style="font-size:0.75em;font-weight:normal;color:#666;">click to expand</small></h2>
+  <ul id="browse-list" style="display:none;">
+<li><a href="anaimuthu-EVRT-Vol-1-Part-1---pp-0-122.html">Thoughts of Periyar E.V.R. — Vol. 1, Part 1</a> <small>(Anaimuthu's Periyar Collection)</small></li>
+<li><a href="anaimuthu-EVRT-Vol-1-Part-2---pp-123-338.html">Thoughts of Periyar E.V.R. — Vol. 1, Part 2</a> <small>(Anaimuthu's Periyar Collection)</small></li>
+<li><a href="anaimuthu-EVRT-Vol-1-Part-3---pp.-339-500.html">Thoughts of Periyar E.V.R. — Vol. 1, Part 3</a> <small>(Anaimuthu's Periyar Collection)</small></li>
+<li><a href="anaimuthu-EVRT-Vol-1-Part-4---pp-501-645,-English-i-xxx.html">Thoughts of Periyar E.V.R. — Vol. 1, Part 4</a> <small>(Anaimuthu's Periyar Collection)</small></li>
+<li><a href="anaimuthu-EVRT-Vol-2-Part-1---pp-646-900.html">Thoughts of Periyar E.V.R. — Vol. 2, Part 1</a> <small>(Anaimuthu's Periyar Collection)</small></li>
+<li><a href="anaimuthu-EVRT-Vol-2-Part-2---pp-901-1045.html">Thoughts of Periyar E.V.R. — Vol. 2, Part 2</a> <small>(Anaimuthu's Periyar Collection)</small></li>
+<li><a href="anaimuthu-EVRT-Vol-2-Part-3---pp-1046-1292,-English-i-viii.html">Thoughts of Periyar E.V.R. — Vol. 2, Part 3</a> <small>(Anaimuthu's Periyar Collection)</small></li>
+<li><a href="anaimuthu-EVRT-Vol-3-Part-1---pp-1293-1634-ocr.html">Thoughts of Periyar E.V.R. — Vol. 3, Part 1</a> <small>(Anaimuthu's Periyar Collection)</small></li>
+<li><a href="anaimuthu-EVRT-Vol-3-Part-2---pp-1635-1888-ocr.html">Thoughts of Periyar E.V.R. — Vol. 3, Part 2</a> <small>(Anaimuthu's Periyar Collection)</small></li>
+<li><a href="anaimuthu-EVRT-Vol-3-Part-3---pp-1889-2076,-English-i-x-ocr.html">Thoughts of Periyar E.V.R. — Vol. 3, Part 3</a> <small>(Anaimuthu's Periyar Collection)</small></li>
+<li><a href="kudi-arasu-1925-Preface-ocr.html">Kudi Arasu — 1925 (Preface)</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-1925-ocr.html">Kudi Arasu — 1925</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-1926-1-ocr.html">Kudi Arasu — 1926, Part 1</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-1926-2-ocr.html">Kudi Arasu — 1926, Part 2</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-1927-1-ocr.html">Kudi Arasu — 1927, Part 1</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-1927-2-ocr.html">Kudi Arasu — 1927, Part 2</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-1928-1-ocr.html">Kudi Arasu — 1928, Part 1</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-1928-2-ocr.html">Kudi Arasu — 1928, Part 2</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-1929-1-ocr.html">Kudi Arasu — 1929, Part 1</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-1929-2-ocr.html">Kudi Arasu — 1929, Part 2</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-1930-1-ocr.html">Kudi Arasu — 1930, Part 1</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-1930-2-ocr.html">Kudi Arasu — 1930, Part 2</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-1931-1-ocr.html">Kudi Arasu — 1931, Part 1</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-1931-2-ocr.html">Kudi Arasu — 1931, Part 2</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-1932-1-ocr.html">Kudi Arasu — 1932, Part 1</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-1932-2-ocr.html">Kudi Arasu — 1932, Part 2</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-1933-1-ocr.html">Kudi Arasu — 1933, Part 1</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-1933-2-ocr.html">Kudi Arasu — 1933, Part 2</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-1934-1-ocr.html">Kudi Arasu — 1934, Part 1</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-1934-2-ocr.html">Kudi Arasu — 1934, Part 2</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-1935-1-ocr.html">Kudi Arasu — 1935, Part 1</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-1935-2-ocr.html">Kudi Arasu — 1935, Part 2</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-1936-1-ocr.html">Kudi Arasu — 1936, Part 1</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-1936-2-ocr.html">Kudi Arasu — 1936, Part 2</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-1937-1-ocr.html">Kudi Arasu — 1937, Part 1</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-1937-2-ocr.html">Kudi Arasu — 1937, Part 2</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-1938-1-ocr.html">Kudi Arasu — 1938, Part 1</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-1938-2-ocr.html">Kudi Arasu — 1938, Part 2</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+<li><a href="kudi-arasu-Revolt.html">Revolt: A Radical Weekly</a> <small>(Kolathur Mani – Kudi Arasu Collection)</small></li>
+</ul>
+<script>
+document.getElementById("browse-heading").addEventListener("click", function() {
+  const list = document.getElementById("browse-list");
+  const heading = document.getElementById("browse-heading");
+  if (list.style.display === "none") {
+    list.style.display = "block";
+    heading.innerHTML = "&#9660; Browse Documents <small style=\"font-size:0.75em;font-weight:normal;color:#666;\">click to collapse</small>";
+  } else {
+    list.style.display = "none";
+    heading.innerHTML = "&#9654; Browse Documents <small style=\"font-size:0.75em;font-weight:normal;color:#666;\">click to expand</small>";
+  }
+});
+</script>
+</div>
+</body>
+</html>
