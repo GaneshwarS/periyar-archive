@@ -7,7 +7,7 @@ docs_dir = "docs"
 if not os.path.exists(corrected_dir):
     print("No corrected/ folder found. Nothing to restore.")
 else:
-    files = [f for f in os.listdir(corrected_dir) if f.endswith(".html")]
+    files = [f for f in os.listdir(corrected_dir) if f.endswith(".html") and f != "index.html"]
     if not files:
         print("No corrected HTML files found.")
     else:
