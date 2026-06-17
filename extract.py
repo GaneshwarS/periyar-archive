@@ -92,8 +92,8 @@ for folder_path, collection_name in collections.items():
   * {{ box-sizing: border-box; margin: 0; padding: 0; }}
   body {{
     font-family: 'Noto Serif Tamil', 'Noto Serif', serif;
-    background: #fff;
-    color: #111;
+    background: #111;
+    color: #ddd;
     line-height: 1.8;
   }}
   header {{
@@ -103,6 +103,7 @@ for folder_path, collection_name in collections.items():
     display: flex;
     align-items: center;
     gap: 20px;
+    border-bottom: 2px solid #cc0000;
   }}
   header a {{
     color: #fff;
@@ -129,10 +130,11 @@ for folder_path, collection_name in collections.items():
     font-size: 1.4em;
     margin-bottom: 6px;
     line-height: 1.4;
+    color: #fff;
   }}
   .collection-label {{
     font-size: 0.85em;
-    color: #888;
+    color: #777;
     font-family: sans-serif;
     margin-bottom: 30px;
     display: block;
@@ -141,15 +143,16 @@ for folder_path, collection_name in collections.items():
     white-space: pre-wrap;
     font-size: 1.05em;
     line-height: 1.9;
+    color: #ddd;
   }}
   .search-banner {{
-    background: #fff8e1;
+    background: #1e1e1e;
     border-left: 3px solid #cc0000;
     padding: 10px 18px;
     margin-bottom: 24px;
     font-family: sans-serif;
     font-size: 14px;
-    color: #333;
+    color: #aaa;
   }}
 </style>
 <script>
@@ -198,13 +201,15 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: 'Noto Serif Tamil', 'Noto Serif', serif;
-    background: #fff;
-    color: #111;
+    background: #111;
+    color: #eee;
   }
   header {
     background: #111;
     color: #fff;
-    padding: 20px 30px;
+    padding: 28px 30px;
+    text-align: center;
+    border-bottom: 2px solid #cc0000;
   }
   header h1 {
     font-size: 1.5em;
@@ -214,7 +219,7 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
   header p {
     font-size: 0.85em;
     color: #aaa;
-    margin-top: 4px;
+    margin-top: 6px;
     font-family: sans-serif;
   }
   .main {
@@ -224,19 +229,18 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
   }
   .description {
     font-size: 0.95em;
-    color: #444;
+    color: #aaa;
     line-height: 1.7;
     margin-bottom: 28px;
     font-family: sans-serif;
   }
-  /* Pagefind UI overrides */
   :root {
     --pagefind-ui-scale: 1;
     --pagefind-ui-primary: #cc0000;
-    --pagefind-ui-text: #111;
-    --pagefind-ui-background: #fff;
-    --pagefind-ui-border: #ddd;
-    --pagefind-ui-tag: #f0f0f0;
+    --pagefind-ui-text: #eee;
+    --pagefind-ui-background: #1e1e1e;
+    --pagefind-ui-border: #444;
+    --pagefind-ui-tag: #222;
     --pagefind-ui-border-width: 1px;
     --pagefind-ui-border-radius: 3px;
     --pagefind-ui-font: sans-serif;
@@ -245,26 +249,26 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
   .notes {
     font-family: sans-serif;
     font-size: 0.85em;
-    color: #555;
+    color: #aaa;
     line-height: 1.6;
     margin-bottom: 8px;
   }
-  .notes strong { color: #111; }
+  .notes strong { color: #eee; }
   .contact {
     font-family: sans-serif;
     font-size: 0.85em;
-    color: #555;
+    color: #aaa;
     margin-bottom: 32px;
   }
   .contact a { color: #cc0000; text-decoration: none; }
   .contact a:hover { text-decoration: underline; }
-  hr { border: none; border-top: 1px solid #eee; margin-bottom: 24px; }
+  hr { border: none; border-top: 1px solid #333; margin-bottom: 24px; }
   #browse-heading {
     cursor: pointer;
     font-size: 1em;
     font-family: sans-serif;
     font-weight: 600;
-    color: #111;
+    color: #eee;
     margin-bottom: 12px;
     user-select: none;
   }
@@ -276,11 +280,11 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
   }
   #browse-list li {
     padding: 6px 0;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid #222;
   }
-  #browse-list a { color: #111; text-decoration: none; }
+  #browse-list a { color: #ccc; text-decoration: none; }
   #browse-list a:hover { color: #cc0000; }
-  #browse-list small { color: #999; }
+  #browse-list small { color: #666; }
 </style>
 </head>
 <body>
@@ -317,7 +321,7 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
   <p class="notes"><strong>Note for Tamil searches:</strong> The search may return words sharing similar characters. For example, a search for "மானம்" might also return results including "மேன்மை".</p>
   <p class="contact">For questions or feedback: <a href="mailto:ganeshwarbaarath@gmail.com">ganeshwarbaarath@gmail.com</a></p>
   <hr>
-  <h2 id="browse-heading">&#9654; Browse Documents <small style="font-size:0.75em;font-weight:normal;color:#999;">click to expand</small></h2>
+  <h2 id="browse-heading">&#9654; Browse Documents <small style="font-size:0.75em;font-weight:normal;color:#666;">click to expand</small></h2>
   <ul id="browse-list" style="display:none;">
 """)
     for out_filename, display_title, collection_name in index_links:
@@ -329,10 +333,10 @@ document.getElementById("browse-heading").addEventListener("click", function() {
   const heading = document.getElementById("browse-heading");
   if (list.style.display === "none") {
     list.style.display = "block";
-    heading.innerHTML = "&#9660; Browse Documents <small style=\\"font-size:0.75em;font-weight:normal;color:#999;\\">click to collapse</small>";
+    heading.innerHTML = "&#9660; Browse Documents <small style=\\"font-size:0.75em;font-weight:normal;color:#666;\\">click to collapse</small>";
   } else {
     list.style.display = "none";
-    heading.innerHTML = "&#9654; Browse Documents <small style=\\"font-size:0.75em;font-weight:normal;color:#999;\\">click to expand</small>";
+    heading.innerHTML = "&#9654; Browse Documents <small style=\\"font-size:0.75em;font-weight:normal;color:#666;\\">click to expand</small>";
   }
 });
 </script>
