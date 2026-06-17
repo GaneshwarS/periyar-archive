@@ -260,8 +260,8 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
     color: #aaa;
     margin-bottom: 32px;
   }
-  .contact a { color: #cc0000; text-decoration: none; }
-  .contact a:hover { text-decoration: underline; }
+  .contact a { color: #aaa; text-decoration: underline; }
+  .contact a:hover { color: #eee; }
   hr { border: none; border-top: 1px solid #333; margin-bottom: 24px; }
   #browse-heading {
     cursor: pointer;
