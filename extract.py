@@ -6,6 +6,49 @@ collections = {
     "E:/Read/Books/Periyar/Kudi Arasu/OCR-ed": "Kolathur Mani – Kudi Arasu Collection"
 }
 
+# Human-readable title mapping
+title_map = {
+    "anaimuthu-EVRT-Vol-1-Part-1---pp-0-122": "Thoughts of Periyar E.V.R. — Vol. 1, Part 1",
+    "anaimuthu-EVRT-Vol-1-Part-2---pp-123-338": "Thoughts of Periyar E.V.R. — Vol. 1, Part 2",
+    "anaimuthu-EVRT-Vol-1-Part-3---pp.-339-500": "Thoughts of Periyar E.V.R. — Vol. 1, Part 3",
+    "anaimuthu-EVRT-Vol-1-Part-4---pp-501-645,-English-i-xxx": "Thoughts of Periyar E.V.R. — Vol. 1, Part 4",
+    "anaimuthu-EVRT-Vol-2-Part-1---pp-646-900": "Thoughts of Periyar E.V.R. — Vol. 2, Part 1",
+    "anaimuthu-EVRT-Vol-2-Part-2---pp-901-1045": "Thoughts of Periyar E.V.R. — Vol. 2, Part 2",
+    "anaimuthu-EVRT-Vol-2-Part-3---pp-1046-1292,-English-i-viii": "Thoughts of Periyar E.V.R. — Vol. 2, Part 3",
+    "anaimuthu-EVRT-Vol-3-Part-1---pp-1293-1634-ocr": "Thoughts of Periyar E.V.R. — Vol. 3, Part 1",
+    "anaimuthu-EVRT-Vol-3-Part-2---pp-1635-1888-ocr": "Thoughts of Periyar E.V.R. — Vol. 3, Part 2",
+    "anaimuthu-EVRT-Vol-3-Part-3---pp-1889-2076,-English-i-x-ocr": "Thoughts of Periyar E.V.R. — Vol. 3, Part 3",
+    "kudi-arasu-1925-Preface-ocr": "Kudi Arasu — 1925 (Preface)",
+    "kudi-arasu-1925-ocr": "Kudi Arasu — 1925",
+    "kudi-arasu-1926-1-ocr": "Kudi Arasu — 1926, Part 1",
+    "kudi-arasu-1926-2-ocr": "Kudi Arasu — 1926, Part 2",
+    "kudi-arasu-1927-1-ocr": "Kudi Arasu — 1927, Part 1",
+    "kudi-arasu-1927-2-ocr": "Kudi Arasu — 1927, Part 2",
+    "kudi-arasu-1928-1-ocr": "Kudi Arasu — 1928, Part 1",
+    "kudi-arasu-1928-2-ocr": "Kudi Arasu — 1928, Part 2",
+    "kudi-arasu-1929-1-ocr": "Kudi Arasu — 1929, Part 1",
+    "kudi-arasu-1929-2-ocr": "Kudi Arasu — 1929, Part 2",
+    "kudi-arasu-1930-1-ocr": "Kudi Arasu — 1930, Part 1",
+    "kudi-arasu-1930-2-ocr": "Kudi Arasu — 1930, Part 2",
+    "kudi-arasu-1931-1-ocr": "Kudi Arasu — 1931, Part 1",
+    "kudi-arasu-1931-2-ocr": "Kudi Arasu — 1931, Part 2",
+    "kudi-arasu-1932-1-ocr": "Kudi Arasu — 1932, Part 1",
+    "kudi-arasu-1932-2-ocr": "Kudi Arasu — 1932, Part 2",
+    "kudi-arasu-1933-1-ocr": "Kudi Arasu — 1933, Part 1",
+    "kudi-arasu-1933-2-ocr": "Kudi Arasu — 1933, Part 2",
+    "kudi-arasu-1934-1-ocr": "Kudi Arasu — 1934, Part 1",
+    "kudi-arasu-1934-2-ocr": "Kudi Arasu — 1934, Part 2",
+    "kudi-arasu-1935-1-ocr": "Kudi Arasu — 1935, Part 1",
+    "kudi-arasu-1935-2-ocr": "Kudi Arasu — 1935, Part 2",
+    "kudi-arasu-1936-1-ocr": "Kudi Arasu — 1936, Part 1",
+    "kudi-arasu-1936-2-ocr": "Kudi Arasu — 1936, Part 2",
+    "kudi-arasu-1937-1-ocr": "Kudi Arasu — 1937, Part 1",
+    "kudi-arasu-1937-2-ocr": "Kudi Arasu — 1937, Part 2",
+    "kudi-arasu-1938-1-ocr": "Kudi Arasu — 1938, Part 1",
+    "kudi-arasu-1938-2-ocr": "Kudi Arasu — 1938, Part 2",
+    "kudi-arasu-Revolt": "Revolt: A Radical Weekly",
+}
+
 os.makedirs("docs", exist_ok=True)
 
 index_links = []
@@ -32,6 +75,8 @@ for folder_path, collection_name in collections.items():
         slug = filename.replace(".pdf", "").replace(" ", "-")
         collection_slug = "anaimuthu" if "Anaimuthu" in collection_name else "kudi-arasu"
         out_filename = f"{collection_slug}-{slug}.html"
+        key = out_filename.replace(".html", "")
+        display_title = title_map.get(key, slug)
         out_path = os.path.join("docs", out_filename)
 
         safe_text = full_text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
@@ -40,34 +85,103 @@ for folder_path, collection_name in collections.items():
 <html lang="ta">
 <head>
 <meta charset="UTF-8">
-<title>{slug} — {collection_name}</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{display_title} — Periyar Archive</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@400;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+  body {{
+    font-family: 'Noto Serif Tamil', 'Noto Serif', serif;
+    background: #fff;
+    color: #111;
+    line-height: 1.8;
+  }}
+  header {{
+    background: #111;
+    color: #fff;
+    padding: 14px 30px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }}
+  header a {{
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    font-family: sans-serif;
+    border: 1px solid #555;
+    padding: 4px 12px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }}
+  header a:hover {{ border-color: #cc0000; color: #cc0000; }}
+  header span {{
+    font-size: 14px;
+    color: #aaa;
+    font-family: sans-serif;
+  }}
+  .doc-container {{
+    max-width: 780px;
+    margin: 40px auto;
+    padding: 0 24px 80px;
+  }}
+  h1 {{
+    font-size: 1.4em;
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }}
+  .collection-label {{
+    font-size: 0.85em;
+    color: #888;
+    font-family: sans-serif;
+    margin-bottom: 30px;
+    display: block;
+  }}
+  #content {{
+    white-space: pre-wrap;
+    font-size: 1.05em;
+    line-height: 1.9;
+  }}
+  .search-banner {{
+    background: #fff8e1;
+    border-left: 3px solid #cc0000;
+    padding: 10px 18px;
+    margin-bottom: 24px;
+    font-family: sans-serif;
+    font-size: 14px;
+    color: #333;
+  }}
+</style>
 <script>
 window.addEventListener("DOMContentLoaded", () => {{
   const params = new URLSearchParams(window.location.search);
   const term = decodeURIComponent(params.get("highlight") || "");
   if (term) {{
     const banner = document.createElement("div");
-    banner.style.cssText = "background:#fff3cd;padding:12px 20px;border-bottom:1px solid #ccc;font-family:sans-serif;font-size:15px;";
+    banner.className = "search-banner";
     banner.innerHTML = "&#128269; Use <strong>Ctrl+F</strong> (or Cmd+F on Mac) to find your search term on this page.";
-    document.body.insertBefore(banner, document.body.firstChild);
+    document.querySelector(".doc-container").insertBefore(banner, document.querySelector(".doc-container").firstChild);
   }}
 }});
 </script>
 </head>
 <body>
-<div style="margin-bottom:15px;">
-<a href="/" style="text-decoration:none;background:#f0f0f0;padding:6px 14px;border-radius:4px;font-family:sans-serif;font-size:14px;">&#8592; Home</a>
+<header>
+  <a href="/">&#8592; Home</a>
+  <span>Periyar Archive</span>
+</header>
+<div class="doc-container">
+<h1>{display_title}</h1>
+<span class="collection-label">{collection_name}</span>
+<div id="content">{safe_text}</div>
 </div>
-<h1>{slug}</h1>
-<p><em>Collection: {collection_name}</em></p>
-<div id="content" style="white-space: pre-wrap; font-family: sans-serif;">{safe_text}</div>
 </body>
 </html>"""
 
         with open(out_path, "w", encoding="utf-8") as f:
             f.write(html)
 
-        index_links.append((out_filename, slug, collection_name))
+        index_links.append((out_filename, display_title, collection_name))
         print(f"  Done: {out_filename}")
 
 # Write index page
@@ -76,34 +190,138 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
 <html lang="ta">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>பெரியார் தேடகம் — Periyar Archive</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@400;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
 <link href="/pagefind/pagefind-ui.css" rel="stylesheet">
 <style>
-  body { font-family: sans-serif; max-width: 860px; margin: 40px auto; padding: 0 20px; }
-  h1 { font-size: 1.6em; }
-  #search { margin: 30px 0; }
-  #browse-heading { cursor: pointer; }
-  #browse-heading:hover { color: #333; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Serif Tamil', 'Noto Serif', serif;
+    background: #fff;
+    color: #111;
+  }
+  header {
+    background: #111;
+    color: #fff;
+    padding: 20px 30px;
+  }
+  header h1 {
+    font-size: 1.5em;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+  header p {
+    font-size: 0.85em;
+    color: #aaa;
+    margin-top: 4px;
+    font-family: sans-serif;
+  }
+  .main {
+    max-width: 780px;
+    margin: 40px auto;
+    padding: 0 24px;
+  }
+  .description {
+    font-size: 0.95em;
+    color: #444;
+    line-height: 1.7;
+    margin-bottom: 28px;
+    font-family: sans-serif;
+  }
+  /* Pagefind UI overrides */
+  :root {
+    --pagefind-ui-scale: 1;
+    --pagefind-ui-primary: #cc0000;
+    --pagefind-ui-text: #111;
+    --pagefind-ui-background: #fff;
+    --pagefind-ui-border: #ddd;
+    --pagefind-ui-tag: #f0f0f0;
+    --pagefind-ui-border-width: 1px;
+    --pagefind-ui-border-radius: 3px;
+    --pagefind-ui-font: sans-serif;
+  }
+  #search { margin-bottom: 20px; }
+  .notes {
+    font-family: sans-serif;
+    font-size: 0.85em;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+  .notes strong { color: #111; }
+  .contact {
+    font-family: sans-serif;
+    font-size: 0.85em;
+    color: #555;
+    margin-bottom: 32px;
+  }
+  .contact a { color: #cc0000; text-decoration: none; }
+  .contact a:hover { text-decoration: underline; }
+  hr { border: none; border-top: 1px solid #eee; margin-bottom: 24px; }
+  #browse-heading {
+    cursor: pointer;
+    font-size: 1em;
+    font-family: sans-serif;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 12px;
+    user-select: none;
+  }
+  #browse-heading:hover { color: #cc0000; }
+  #browse-list {
+    list-style: none;
+    font-family: sans-serif;
+    font-size: 0.9em;
+  }
+  #browse-list li {
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  #browse-list a { color: #111; text-decoration: none; }
+  #browse-list a:hover { color: #cc0000; }
+  #browse-list small { color: #999; }
 </style>
 </head>
 <body>
-<h1>பெரியார் தேடகம் — Periyar Archive</h1>
-<p>Search across the collected volumes of Periyar's writings published by V Anaimuthu (1974 edition) and the Kudi Arasu and Revolt collections published by Kolathur Mani.</p>
-<div id="search"></div>
-<script src="/pagefind/pagefind-ui.js"></script>
-<script>
-  window.addEventListener('DOMContentLoaded', () => {
-    new PagefindUI({ element: "#search", showImages: false, highlightParam: "highlight" });
-  });
-</script>
-<p><strong>Note for Tamil searches:</strong> The search may return words sharing similar characters. For example, a search for "மானம்" might also return results including "மேன்மை".</p>
-<p>For questions or feedback, write to: <a href="mailto:ganeshwarbaarath@gmail.com">ganeshwarbaarath@gmail.com</a></p>
-<hr>
-<h2 id="browse-heading">&#9654; Browse Documents <small style="font-size:0.6em;font-weight:normal;">click to expand</small></h2>
-<ul id="browse-list" style="display:none;">
+<header>
+  <h1>பெரியார் தேடகம் — Periyar Archive</h1>
+  <p>A full-text searchable archive of Periyar E.V. Ramasamy's writings</p>
+</header>
+<div class="main">
+  <p class="description" style="margin-top:28px;">Search across the collected volumes of Periyar's writings published by V Anaimuthu (1974 edition) and the Kudi Arasu and Revolt collections published by Kolathur Mani.</p>
+  <div id="search"></div>
+  <script src="/pagefind/pagefind-ui.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      new PagefindUI({
+        element: "#search",
+        showImages: false,
+        highlightParam: "highlight",
+        translations: {
+          placeholder: "Search",
+          clear_search: "Clear",
+          load_more: "Load more results",
+          search_label: "Search this archive",
+          filters_label: "Filters",
+          zero_results: "No results for [SEARCH_TERM]",
+          many_results: "[COUNT] results for [SEARCH_TERM]",
+          one_result: "[COUNT] result for [SEARCH_TERM]",
+          alt_search: "No results for [SEARCH_TERM]. Showing results for [DIFFERENT_TERM] instead",
+          search_suggestion: "No results for [SEARCH_TERM]. Try one of the following searches:",
+          searching: "Searching for [SEARCH_TERM]..."
+        }
+      });
+    });
+  </script>
+  <p class="notes"><strong>Note for Tamil searches:</strong> The search may return words sharing similar characters. For example, a search for "மானம்" might also return results including "மேன்மை".</p>
+  <p class="contact">For questions or feedback: <a href="mailto:ganeshwarbaarath@gmail.com">ganeshwarbaarath@gmail.com</a></p>
+  <hr>
+  <h2 id="browse-heading">&#9654; Browse Documents <small style="font-size:0.75em;font-weight:normal;color:#999;">click to expand</small></h2>
+  <ul id="browse-list" style="display:none;">
 """)
-    for out_filename, slug, collection_name in index_links:
-        f.write(f'<li><a href="{out_filename}">{slug}</a> <small>({collection_name})</small></li>\n')
+    for out_filename, display_title, collection_name in index_links:
+        f.write(f'<li><a href="{out_filename}">{display_title}</a> <small>({collection_name})</small></li>\n')
     f.write("""</ul>
 <script>
 document.getElementById("browse-heading").addEventListener("click", function() {
@@ -111,13 +329,14 @@ document.getElementById("browse-heading").addEventListener("click", function() {
   const heading = document.getElementById("browse-heading");
   if (list.style.display === "none") {
     list.style.display = "block";
-    heading.innerHTML = "&#9660; Browse Documents <small style=\\"font-size:0.6em;font-weight:normal;\\">click to collapse</small>";
+    heading.innerHTML = "&#9660; Browse Documents <small style=\\"font-size:0.75em;font-weight:normal;color:#999;\\">click to collapse</small>";
   } else {
     list.style.display = "none";
-    heading.innerHTML = "&#9654; Browse Documents <small style=\\"font-size:0.6em;font-weight:normal;\\">click to expand</small>";
+    heading.innerHTML = "&#9654; Browse Documents <small style=\\"font-size:0.75em;font-weight:normal;color:#999;\\">click to expand</small>";
   }
 });
 </script>
+</div>
 </body>
 </html>""")
 
