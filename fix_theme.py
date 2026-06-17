@@ -2,14 +2,13 @@ import os
 
 dirs = ["docs", "corrected"]
 
-old_body = "background: #fff;\n    color: #111;"
-new_body = "background: #111;\n    color: #ddd;"
-
-old_banner = 'background:#fff3cd;padding:12px 20px;border-bottom:1px solid #ccc;font-family:sans-serif;font-size:15px;'
-new_banner = 'background:#1e1e1e;border-left:3px solid #cc0000;padding:10px 18px;font-family:sans-serif;font-size:14px;color:#aaa;'
-
-old_home = 'text-decoration:none;background:#f0f0f0;padding:6px 14px;border-radius:4px;font-family:sans-serif;font-size:14px;'
-new_home = 'text-decoration:none;background:#222;color:#fff;padding:6px 14px;border-radius:4px;font-family:sans-serif;font-size:14px;'
+style_block = """<style>
+  body { background: #111 !important; color: #ddd !important; }
+  h1 { color: #fff !important; }
+  .collection-label { color: #777 !important; }
+  #content { color: #ddd !important; }
+  a { color: #ccc !important; }
+</style>"""
 
 for folder in dirs:
     for filename in os.listdir(folder):
@@ -18,11 +17,12 @@ for folder in dirs:
         filepath = os.path.join(folder, filename)
         with open(filepath, "r", encoding="utf-8") as f:
             content = f.read()
-        content = content.replace(old_body, new_body)
-        content = content.replace(old_banner, new_banner)
-        content = content.replace(old_home, new_home)
+        if "background: #111" in content or "background:#111" in content:
+            print(f"Already themed: {filename}")
+            continue
+        content = content.replace("</head>", style_block + "\n</head>")
         with open(filepath, "w", encoding="utf-8") as f:
             f.write(content)
-        print(f"Updated: {filepath}")
+        print(f"Updated: {filename}")
 
 print("Done.")
