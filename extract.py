@@ -125,7 +125,7 @@ for folder_path, collection_name in collections.items():
   .doc-container {{
     max-width: 780px;
     margin: 40px auto;
-    padding: 0 24px 80px;
+    padding: 0 48px 80px;
   }}
   h1 {{
     font-size: 1.4em;
@@ -160,12 +160,46 @@ for folder_path, collection_name in collections.items():
 window.addEventListener("DOMContentLoaded", () => {{
   const params = new URLSearchParams(window.location.search);
   const term = decodeURIComponent(params.get("highlight") || "");
-  if (term) {{
-    const banner = document.createElement("div");
-    banner.className = "search-banner";
-    banner.innerHTML = "&#128269; Use <strong>Ctrl+F</strong> (or Cmd+F on Mac) to find your search term on this page.";
-    document.querySelector(".doc-container").insertBefore(banner, document.querySelector(".doc-container").firstChild);
-  }}
+
+  // Build search box
+  const searchBox = document.createElement("div");
+  searchBox.className = "search-banner";
+  searchBox.innerHTML = `
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <input id="doc-search" type="text" placeholder="Search within this document..."
+        style="flex:1;min-width:200px;padding:6px 10px;background:#2a2a2a;color:#eee;border:1px solid #444;border-radius:3px;font-size:14px;font-family:sans-serif;"
+        value="${{term}}">
+      <button onclick="searchInPage()" style="padding:6px 14px;background:#cc0000;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:14px;font-family:sans-serif;">Find</button>
+      <span id="match-count" style="font-size:13px;color:#888;font-family:sans-serif;"></span>
+    </div>`;
+  document.querySelector(".doc-container").insertBefore(searchBox, document.querySelector(".doc-container").firstChild);
+
+  // Search function
+  window.searchInPage = function() {{
+    const query = document.getElementById("doc-search").value.trim();
+    if (!query) return;
+    const content = document.getElementById("content");
+    const text = content.innerHTML;
+    // Remove previous highlights
+    content.innerHTML = text.replace(/<mark class="doc-highlight">(.*?)<\/mark>/g, "$1");
+    if (!query) return;
+    const escaped = query.replace(/[.*+?^${{}}()|[\]\\]/g, "\\$&");
+    const regex = new RegExp(escaped, "gi");
+    const newText = content.innerHTML.replace(regex, match => `<mark class="doc-highlight" style="background:#cc0000;color:#fff;border-radius:2px;padding:0 2px;">${{match}}</mark>`);
+    content.innerHTML = newText;
+    const first = content.querySelector(".doc-highlight");
+    if (first) first.scrollIntoView({{behavior: "smooth", block: "center"}});
+    const count = content.querySelectorAll(".doc-highlight").length;
+    document.getElementById("match-count").textContent = count > 0 ? `${{count}} match${{count > 1 ? "es" : ""}}` : "No matches";
+  }};
+
+  // Trigger search on Enter key
+  document.addEventListener("keydown", e => {{
+    if (e.key === "Enter" && document.activeElement.id === "doc-search") searchInPage();
+  }});
+
+  // Auto-search if term came from search results
+  if (term) searchInPage();
 }});
 </script>
 </head>
