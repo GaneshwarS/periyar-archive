@@ -325,7 +325,8 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
 <body>
 <header>
   <h1>பெரியார் தேடகம் — Periyar Archive</h1>
-  <p>A full-text searchable archive of Periyar E.V. Ramasamy's writings</p>
+  <p style="margin-bottom: 14px;">A full-text searchable archive of Periyar E.V. Ramasamy's writings</p>
+  <a href="about.html" style="color: #fff; text-decoration: none; font-size: 13px; font-family: sans-serif; border: 1px solid #555; padding: 5px 14px; border-radius: 3px; display: inline-block;">About the Archive</a>
 </header>
 <div class="main">
   <p class="description" style="margin-top:28px;">Search across the collected volumes of Periyar's writings published by V Anaimuthu (1974 edition) and the Kudi Arasu and Revolt collections published by Kolathur Mani.</p>
@@ -354,7 +355,7 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
     });
   </script>
   <p class="notes"><strong>Note for Tamil searches:</strong> The search may return words sharing similar characters. For example, a search for "மானம்" might also return results including "மேன்மை".</p>
-  <p class="contact">For questions or feedback: <a href="mailto:ganeshwarbaarath@gmail.com">ganeshwarbaarath@gmail.com</a></p>
+  <p class="contact">For questions or feedback: <a href="mailto:contact@periyararchive.in">contact@periyararchive.in</a></p>
   <hr>
   <h2 id="browse-heading">&#9654; Browse Documents <small style="font-size:0.75em;font-weight:normal;color:#666;">click to expand</small></h2>
   <p style="font-family:sans-serif;font-size:0.9em;margin-bottom:16px;"><a href="https://theperiyarproject.wordpress.com/2022/09/17/a-periyar-reading-list/" target="_blank" style="color:#aaa;text-decoration:underline;">&#9654; For more on Periyar: A Periyar Reading List</a></p>
@@ -382,3 +383,99 @@ document.getElementById("browse-heading").addEventListener("click", function() {
 
 print("\nAll done. HTML files are in the docs/ folder.")
 print(f"Total documents processed: {len(index_links)}")
+# --- GENERATE ABOUT PAGE ---
+
+about_html = """<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script data-goatcounter="https://periyararchive.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<title>About — Periyar Archive</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@400;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Serif Tamil', 'Noto Serif', serif;
+    background: #111;
+    color: #ddd;
+    line-height: 1.8;
+  }
+  header {
+    background: #111;
+    color: #fff;
+    padding: 14px 30px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-bottom: 2px solid #cc0000;
+  }
+  header a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    font-family: sans-serif;
+    border: 1px solid #555;
+    padding: 4px 12px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  header a:hover { border-color: #cc0000; color: #cc0000; }
+  header span {
+    font-size: 14px;
+    color: #aaa;
+    font-family: sans-serif;
+  }
+  .doc-container {
+    max-width: 780px;
+    margin: 40px auto;
+    padding: 0 48px 80px;
+  }
+  h1 { font-size: 1.8em; margin-bottom: 24px; color: #fff; }
+  h2 { font-size: 1.3em; margin-top: 36px; margin-bottom: 16px; color: #fff; border-bottom: 1px solid #333; padding-bottom: 6px;}
+  p { margin-bottom: 18px; font-size: 1.05em; line-height: 1.9;}
+  ul { margin-bottom: 18px; padding-left: 24px; font-size: 1.05em; line-height: 1.9;}
+  li { margin-bottom: 12px; }
+  blockquote { background: #1e1e1e; border-left: 3px solid #cc0000; padding: 14px 18px; margin-bottom: 24px; font-size: 0.95em; color: #ccc;}
+  a { color: #cc0000; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<header>
+  <a href="/">&#8592; Home</a>
+  <span>Periyar Archive</span>
+</header>
+<div class="doc-container">
+  <h1>About Periyar Archive</h1>
+  <p>The Periyar Archive (periyararchive.in) is a comprehensive, open-access digital database dedicated to the writings, speeches, and editorial work of E.V. Ramasamy ‘Periyar’. Designed for researchers, historians, and the general public, this platform provides full-text searchability across publicly available compilations of Periyar’s writings and speeches.</p>
+  <p>While the novelty and radicality of Periyar’s approaches to caste, gender, religion, nation, and culture have often been recognised by anti-caste scholars and activists around the world, there has been a significant barrier to accessing his primary texts. This archive aims to dismantle that barrier by digitising more than 13,500 pages of his public writings and speeches into a single database, indexing over 3,50,000 unique search terms for exhaustive textual analysis.</p>
+
+  <h2>The Collections & Provenance</h2>
+  <p>This searchable database stands on the shoulders of the scholars, activists, and organisations who painstakingly compiled, edited, and digitised Periyar’s original print publications. The archive currently indexes the following major collections:</p>
+  <ul>
+    <li><strong>The V. Anaimuthu Volumes (1974 Edition):</strong> This magisterial compilation organised Periyar's thoughts across various social and political themes into three volumes and ten parts. It was put together by the extraordinary labour of V Anaimuthu and his Sinthanaiyalar Kazhagam. In 2011, under the presidency of Ku. Ma. Subramanian, the organisation generously permitted these volumes to be uploaded for free online public access. This collection has now been expanded into 20 parts, though they remain to be digitised.</li>
+    <li><strong>The Kudi Arasu Collection (27 Volumes):</strong> Originally published as the flagship weekly of the Self-Respect Movement, Kudi Arasu ran as a weekly between 1925 and 1949. In addition to serving as the ideological repository of the Self-Respect Movement during its heyday, it also published the first Tamil translations of Marx and Engels’s <em>Communist Manifesto</em>, Bhagat Singh’s <em>Why I am an Atheist</em>, Lenin’s essays on religion (serialised and later published as <em>Leninum Mathamum</em>), and Babasaheb Ambedkar’s <em>Annihilation of Caste</em>. Periyar’s writings in Kudi Arasu between 1925 and 1938 (alongside Puratchi and Pagutharivu, published when Kudi Arasu was banned in 1934) were compiled and edited into 27 volumes in 2008 by Kolathur Mani for the Periyar Dravidar Kazhagam (PDK). He now leads the Dravidar Viduthalai Kazhagam (DVK).</li>
+    <li><strong>The Revolt Collection:</strong> The Self-Respect Movement’s first English-language weekly was published by Periyar for over two years between 1928 and 1930, at a time when very few Tamilians, and fewer still Tamil non-Brahmins, could read or write English. Articles published in the weekly were compiled and edited for the PDK by noted scholars V. Geetha and S.V. Rajadurai.</li>
+  </ul>
+  <p>Both these compilations were published by Kolathur Mani, who made the digital files freely available online to ensure Periyar’s legacy remained unrestricted by copyright and accessible to all. This archive aggregates those very files to preserve them and make them fully searchable.</p>
+
+  <h2>Methodology & Usage</h2>
+  <p>To transform these historical print compilations into a modern research tool, the archive employs a multi-stage digital pipeline:</p>
+  <ul>
+    <li><strong>Optical Character Recognition (OCR):</strong> Because the source volumes were preserved as image-only documents, they were systematically processed via OCR text-recognition tools to construct searchable text layers.</li>
+    <li><strong>Indexing & Search:</strong> Full-text extraction and search capability are powered by Pagefind, an open-source static search engine. This infrastructure allows for high-speed, client-side keyword discovery across thousands of pages without requiring heavy server-side processing.</li>
+  </ul>
+  <blockquote><strong>Note on Scan and Search Accuracy:</strong> Because the database relies on automated OCR of historical typography, some character recognition, line break and page break errors may persist. Furthermore, as PageFind is not optimised for Tamil’s agglutinative morphology (joint letters), the search results might be more expansive than required, especially for short search terms. The archive recognises these limitations and is continuously in search of ways to address them.</blockquote>
+
+  <h2>Curation & Contact</h2>
+  <p>The Periyar Archive is an independent digital humanities project curated and maintained by Ganeshwar, a researcher working on Periyar’s political thought. It is a completely non-commercial endeavour built solely to facilitate historical research and public education. It is not monetised in any way and does not collect any third-party user data.</p>
+  <p>For questions, feedback, or to report archival errors, please reach out at: <a href="mailto:contact@periyararchive.in">contact@periyararchive.in</a></p>
+</div>
+</body>
+</html>"""
+
+with open("docs/about.html", "w", encoding="utf-8") as f:
+    f.write(about_html)
+
+print("  Done: about.html generated")
