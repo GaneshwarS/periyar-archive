@@ -149,6 +149,7 @@
             // NEW DESIGN: Transparent background with a red outline and red text
             toggleBtn.style.cssText = 'background: transparent; color: #cc0000; border: 1px solid #cc0000; padding: 4px 12px; border-radius: 3px; font-family: sans-serif; font-size: 12px; cursor: pointer; transition: 0.2s;';
             
+            toggleContainer.appendChild(toggleBtn);
             const searchDiv = document.getElementById('search');
             searchDiv.parentNode.insertBefore(toggleContainer, searchDiv);
 

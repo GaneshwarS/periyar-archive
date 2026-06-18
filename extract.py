@@ -205,7 +205,7 @@ window.addEventListener("DOMContentLoaded", () => {{
       <input id="doc-search" type="text" placeholder="Search within this document..."
         style="flex:1;min-width:200px;padding:6px 10px;background:#2a2a2a;color:#eee;border:1px solid #444;border-radius:3px;font-size:14px;font-family:sans-serif;"
         value="${{term}}">
-      <button onclick="searchInPage()" style="padding:6px 14px;background:#cc0000;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:14px;font-family:sans-serif;">Find</button>
+      <button id="doc-search-btn" style="padding:6px 14px;background:#cc0000;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:14px;font-family:sans-serif;">Find</button>
       <span id="match-count" style="font-size:13px;color:#888;font-family:sans-serif;"></span>
     </div>`;
   document.querySelector(".doc-container").insertBefore(searchBox, document.querySelector(".doc-container").firstChild);
@@ -224,7 +224,7 @@ window.addEventListener("DOMContentLoaded", () => {{
     const count = content.querySelectorAll(".doc-highlight").length;
     document.getElementById("match-count").textContent = count > 0 ? `${{count}} match${{count > 1 ? "es" : ""}}` : "No matches";
   }};
-
+document.getElementById("doc-search-btn").addEventListener("click", searchInPage);
   document.addEventListener("keydown", e => {{
     if (e.key === "Enter" && document.activeElement.id === "doc-search") searchInPage();
   }});
@@ -404,6 +404,7 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
             // NEW DESIGN: Transparent background with a red outline and red text
             toggleBtn.style.cssText = 'background: transparent; color: #cc0000; border: 1px solid #cc0000; padding: 4px 12px; border-radius: 3px; font-family: sans-serif; font-size: 12px; cursor: pointer; transition: 0.2s;';
             
+            toggleContainer.appendChild(toggleBtn);
             const searchDiv = document.getElementById('search');
             searchDiv.parentNode.insertBefore(toggleContainer, searchDiv);
 
