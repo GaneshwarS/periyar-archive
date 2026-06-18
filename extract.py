@@ -6,7 +6,6 @@ collections = {
     "E:/Read/Books/Periyar/Kudi Arasu/OCR-ed": "Kolathur Mani – Kudi Arasu Collection"
 }
 
-# Human-readable title mapping
 title_map = {
     "anaimuthu-EVRT-Vol-1-Part-1---pp-0-122": "Thoughts of Periyar E.V.R. — Vol. 1, Part 1",
     "anaimuthu-EVRT-Vol-1-Part-2---pp-123-338": "Thoughts of Periyar E.V.R. — Vol. 1, Part 2",
@@ -66,7 +65,12 @@ for folder_path, collection_name in collections.items():
             doc = fitz.open(filepath)
             full_text = ""
             for page in doc:
-                full_text += page.get_text() + "\n\n"
+                blocks = page.get_text("blocks")
+                blocks = sorted(blocks, key=lambda b: (b[1], b[0]))
+                for block in blocks:
+                    block_text = block[4].strip()
+                    if block_text:
+                        full_text += block_text + "\n\n"
             doc.close()
         except Exception as e:
             print(f"  ERROR reading {filename}: {e}")
@@ -161,7 +165,6 @@ window.addEventListener("DOMContentLoaded", () => {{
   const params = new URLSearchParams(window.location.search);
   const term = decodeURIComponent(params.get("highlight") || "");
 
-  // Build search box
   const searchBox = document.createElement("div");
   searchBox.className = "search-banner";
   searchBox.innerHTML = `
@@ -174,31 +177,24 @@ window.addEventListener("DOMContentLoaded", () => {{
     </div>`;
   document.querySelector(".doc-container").insertBefore(searchBox, document.querySelector(".doc-container").firstChild);
 
-  // Search function
   window.searchInPage = function() {{
     const query = document.getElementById("doc-search").value.trim();
     if (!query) return;
     const content = document.getElementById("content");
-    const text = content.innerHTML;
-    // Remove previous highlights
-    content.innerHTML = text.replace(/<mark class="doc-highlight">(.*?)<\/mark>/g, "$1");
-    if (!query) return;
+    content.innerHTML = content.innerHTML.replace(/<mark class="doc-highlight">(.*?)<\/mark>/g, "$1");
     const escaped = query.replace(/[.*+?^${{}}()|[\]\\]/g, "\\$&");
     const regex = new RegExp(escaped, "gi");
-    const newText = content.innerHTML.replace(regex, match => `<mark class="doc-highlight" style="background:#cc0000;color:#fff;border-radius:2px;padding:0 2px;">${{match}}</mark>`);
-    content.innerHTML = newText;
+    content.innerHTML = content.innerHTML.replace(regex, match => `<mark class="doc-highlight" style="background:#cc0000;color:#fff;border-radius:2px;padding:0 2px;">${{match}}</mark>`);
     const first = content.querySelector(".doc-highlight");
     if (first) first.scrollIntoView({{behavior: "smooth", block: "center"}});
     const count = content.querySelectorAll(".doc-highlight").length;
     document.getElementById("match-count").textContent = count > 0 ? `${{count}} match${{count > 1 ? "es" : ""}}` : "No matches";
   }};
 
-  // Trigger search on Enter key
   document.addEventListener("keydown", e => {{
     if (e.key === "Enter" && document.activeElement.id === "doc-search") searchInPage();
   }});
 
-  // Auto-search if term came from search results
   if (term) searchInPage();
 }});
 </script>
@@ -222,7 +218,6 @@ window.addEventListener("DOMContentLoaded", () => {{
         index_links.append((out_filename, display_title, collection_name))
         print(f"  Done: {out_filename}")
 
-# Write index page
 with open("docs/index.html", "w", encoding="utf-8") as f:
     f.write("""<!DOCTYPE html>
 <html lang="ta">
