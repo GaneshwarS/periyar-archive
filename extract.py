@@ -324,6 +324,7 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
   <p class="contact">For questions or feedback: <a href="mailto:ganeshwarbaarath@gmail.com">ganeshwarbaarath@gmail.com</a></p>
   <hr>
   <h2 id="browse-heading">&#9654; Browse Documents <small style="font-size:0.75em;font-weight:normal;color:#666;">click to expand</small></h2>
+  <p style="font-family:sans-serif;font-size:0.9em;margin-bottom:16px;"><a href="https://theperiyarproject.wordpress.com/2022/09/17/a-periyar-reading-list/" target="_blank" style="color:#aaa;text-decoration:underline;">&#9654; For more on Periyar: A Periyar Reading List</a></p>
   <ul id="browse-list" style="display:none;">
 """)
     for out_filename, display_title, collection_name in index_links:
