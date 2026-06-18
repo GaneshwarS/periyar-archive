@@ -106,8 +106,7 @@
 <div class="main">
   <p class="description" style="margin-top:28px;">Search across the collected volumes of Periyar's writings published by V Anaimuthu (1974 edition) and the Kudi Arasu and Revolt collections published by Kolathur Mani.</p>
   <div id="search"></div>
-  <script src="/pagefind/pagefind-ui.js"></script>
-  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+  <script src="/pagefind/pagefind-ui.js" defer></script>
   <script>
     window.addEventListener('DOMContentLoaded', () => {
       // 1. Initialize Pagefind
@@ -134,61 +133,78 @@
       const isDesktop = window.innerWidth > 768 && !(/Mobi|Android/i.test(navigator.userAgent));
 
       if (isDesktop) {
-        // 3. Wait a fraction of a second for Pagefind to physically build the search bar
+        // Wait for Pagefind to build the search bar
         const checkExist = setInterval(function() {
           const searchInput = document.querySelector('.pagefind-ui__search-input');
           if (searchInput) {
             clearInterval(checkExist);
 
-            // 4. Create the Toggle Button UI
+            // 3. Create the Toggle Button UI
             const toggleContainer = document.createElement('div');
             toggleContainer.style.cssText = 'display: flex; justify-content: flex-end; margin-bottom: 8px;';
             
             const toggleBtn = document.createElement('button');
             toggleBtn.innerHTML = 'Keyboard: <strong>தமிழ் (ON)</strong>';
-            toggleBtn.style.cssText = 'background: #cc0000; color: #fff; border: none; padding: 4px 12px; border-radius: 3px; font-family: sans-serif; font-size: 12px; cursor: pointer; transition: 0.2s;';
             
-            // Insert the button right above the search bar
-            toggleContainer.appendChild(toggleBtn);
+            // NEW DESIGN: Transparent background with a red outline and red text
+            toggleBtn.style.cssText = 'background: transparent; color: #cc0000; border: 1px solid #cc0000; padding: 4px 12px; border-radius: 3px; font-family: sans-serif; font-size: 12px; cursor: pointer; transition: 0.2s;';
+            
             const searchDiv = document.getElementById('search');
             searchDiv.parentNode.insertBefore(toggleContainer, searchDiv);
 
-            // 5. Initialize Google Tanglish Transliteration
-            google.load("elements", "1", {
-              packages: "transliteration",
-              callback: function() {
-                const options = {
-                  sourceLanguage: google.elements.transliteration.LanguageCode.ENGLISH,
-                  destinationLanguage: [google.elements.transliteration.LanguageCode.TAMIL],
-                  shortcutKey: 'ctrl+m', // Allows users to toggle using Ctrl+M
-                  transliterationEnabled: true
-                };
-                
-                const control = new google.elements.transliteration.TransliterationControl(options);
-                control.makeTransliteratable([searchInput]);
+            // Toggle Logic
+            let isTamil = true;
+            toggleBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              isTamil = !isTamil;
+              toggleBtn.innerHTML = isTamil ? 'Keyboard: <strong>தமிழ் (ON)</strong>' : 'Keyboard: <strong>English (ON)</strong>';
+              
+              // NEW TOGGLE DESIGN: Switches to subtle grey when turned off
+              toggleBtn.style.color = isTamil ? '#cc0000' : '#aaa';
+              toggleBtn.style.borderColor = isTamil ? '#cc0000' : '#555';
+              
+              searchInput.focus();
+            });
 
-                // 6. Handle Button Clicks
-                let isTamil = true;
-                toggleBtn.addEventListener('click', (e) => {
-                  e.preventDefault();
-                  isTamil = !isTamil;
-                  if (isTamil) {
-                    control.enableTransliteration();
-                    toggleBtn.innerHTML = 'Keyboard: <strong>தமிழ் (ON)</strong>';
-                    toggleBtn.style.background = '#cc0000';
-                    toggleBtn.style.color = '#fff';
-                  } else {
-                    control.disableTransliteration();
-                    toggleBtn.innerHTML = 'Keyboard: <strong>English (ON)</strong>';
-                    toggleBtn.style.background = '#333';
-                    toggleBtn.style.color = '#aaa';
-                  }
-                  searchInput.focus();
+            // 4. Modern Transliteration Function
+            async function transliterate(text) {
+              if (!text.trim()) return text;
+              try {
+                const response = await fetch(`https://inputtools.google.com/request?text=${text}&itc=ta-t-i0-und&num=1`, {
+                  method: 'POST'
                 });
+                const data = await response.json();
+                if (data[0] === 'SUCCESS') {
+                  return data[1][0][1][0];
+                }
+              } catch (e) {
+                console.error("Transliteration error:", e);
+              }
+              return text;
+            }
+
+            // 5. Listen for Spacebar or Enter
+            searchInput.addEventListener('keyup', async (e) => {
+              if (!isTamil) return;
+              
+              if (e.key === ' ' || e.key === 'Enter') {
+                const words = searchInput.value.split(' ');
+                
+                const targetIndex = e.key === ' ' ? words.length - 2 : words.length - 1;
+                const wordToTranslate = words[targetIndex];
+
+                if (wordToTranslate && /[a-zA-Z]/.test(wordToTranslate)) {
+                  const tamilWord = await transliterate(wordToTranslate);
+                  words[targetIndex] = tamilWord;
+                  
+                  searchInput.value = words.join(' ');
+                  
+                  searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+                }
               }
             });
           }
-        }, 100); // Checks every 100 milliseconds
+        }, 100);
       }
     });
   </script>
