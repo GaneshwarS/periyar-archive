@@ -361,8 +361,10 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
   <p class="description" style="margin-top:28px;">Search across the collected volumes of Periyar's writings published by V Anaimuthu (1974 edition) and the Kudi Arasu and Revolt collections published by Kolathur Mani.</p>
   <div id="search"></div>
   <script src="/pagefind/pagefind-ui.js"></script>
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
   <script>
     window.addEventListener('DOMContentLoaded', () => {
+      // 1. Initialize Pagefind
       new PagefindUI({
         element: "#search",
         showImages: false,
@@ -381,6 +383,67 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
           searching: "Searching for [SEARCH_TERM]..."
         }
       });
+
+      // 2. Device Check: Only run typing tool on Desktops/Laptops
+      const isDesktop = window.innerWidth > 768 && !(/Mobi|Android/i.test(navigator.userAgent));
+
+      if (isDesktop) {
+        // 3. Wait a fraction of a second for Pagefind to physically build the search bar
+        const checkExist = setInterval(function() {
+          const searchInput = document.querySelector('.pagefind-ui__search-input');
+          if (searchInput) {
+            clearInterval(checkExist);
+
+            // 4. Create the Toggle Button UI
+            const toggleContainer = document.createElement('div');
+            toggleContainer.style.cssText = 'display: flex; justify-content: flex-end; margin-bottom: 8px;';
+            
+            const toggleBtn = document.createElement('button');
+            toggleBtn.innerHTML = 'Keyboard: <strong>தமிழ் (ON)</strong>';
+            toggleBtn.style.cssText = 'background: #cc0000; color: #fff; border: none; padding: 4px 12px; border-radius: 3px; font-family: sans-serif; font-size: 12px; cursor: pointer; transition: 0.2s;';
+            
+            // Insert the button right above the search bar
+            toggleContainer.appendChild(toggleBtn);
+            const searchDiv = document.getElementById('search');
+            searchDiv.parentNode.insertBefore(toggleContainer, searchDiv);
+
+            // 5. Initialize Google Tanglish Transliteration
+            google.load("elements", "1", {
+              packages: "transliteration",
+              callback: function() {
+                const options = {
+                  sourceLanguage: google.elements.transliteration.LanguageCode.ENGLISH,
+                  destinationLanguage: [google.elements.transliteration.LanguageCode.TAMIL],
+                  shortcutKey: 'ctrl+m', // Allows users to toggle using Ctrl+M
+                  transliterationEnabled: true
+                };
+                
+                const control = new google.elements.transliteration.TransliterationControl(options);
+                control.makeTransliteratable([searchInput]);
+
+                // 6. Handle Button Clicks
+                let isTamil = true;
+                toggleBtn.addEventListener('click', (e) => {
+                  e.preventDefault();
+                  isTamil = !isTamil;
+                  if (isTamil) {
+                    control.enableTransliteration();
+                    toggleBtn.innerHTML = 'Keyboard: <strong>தமிழ் (ON)</strong>';
+                    toggleBtn.style.background = '#cc0000';
+                    toggleBtn.style.color = '#fff';
+                  } else {
+                    control.disableTransliteration();
+                    toggleBtn.innerHTML = 'Keyboard: <strong>English (ON)</strong>';
+                    toggleBtn.style.background = '#333';
+                    toggleBtn.style.color = '#aaa';
+                  }
+                  searchInput.focus();
+                });
+              }
+            });
+          }
+        }, 100); // Checks every 100 milliseconds
+      }
     });
   </script>
   <p class="notes"><strong>Note for Tamil searches:</strong> The search may return words sharing similar characters. For example, a search for "மானம்" might also return results including "மேன்மை".</p>
