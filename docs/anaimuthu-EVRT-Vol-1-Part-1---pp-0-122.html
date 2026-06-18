@@ -24,15 +24,14 @@ window.addEventListener("DOMContentLoaded", () => {
   const params = new URLSearchParams(window.location.search);
   const term = decodeURIComponent(params.get("highlight") || "");
 
-  // 1. Build the Search UI with the Toggle Button
   const searchBox = document.createElement("div");
   searchBox.className = "search-banner";
   searchBox.innerHTML = `
     <div style="display:flex; justify-content: flex-end; margin-bottom: 8px;">
-      <button id="doc-toggle-btn" style="background: transparent; color: #cc0000; border: 1px solid #cc0000; padding: 4px 12px; border-radius: 3px; font-family: sans-serif; font-size: 12px; cursor: pointer; transition: 0.2s;">Keyboard: <strong>தமிழ் (ON)</strong></button>
+      <button id="doc-toggle-btn" style="background: transparent; color: #cc0000; border: 1px solid #cc0000; padding: 4px 12px; border-radius: 3px; font-family: sans-serif; font-size: 12px; cursor: pointer;">Keyboard: <strong>தமிழ் (ON)</strong></button>
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-      <input id="doc-search" type="text" placeholder="Search: press space for Tamil transliteration..."
+      <input id="doc-search" type="text" placeholder="Search within this document..."
         style="flex:1;min-width:200px;padding:6px 10px;background:#2a2a2a;color:#eee;border:1px solid #444;border-radius:3px;font-size:14px;font-family:sans-serif;"
         value="${term}">
       <button id="doc-search-btn" style="padding:6px 14px;background:#cc0000;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:14px;font-family:sans-serif;">Find</button>
@@ -44,7 +43,6 @@ window.addEventListener("DOMContentLoaded", () => {
   const toggleBtn = document.getElementById("doc-toggle-btn");
   const content = document.getElementById("content");
 
-  // 2. Transliteration Logic for In-Page Search
   let isTamil = true;
   toggleBtn.addEventListener('click', (e) => {
     e.preventDefault();
@@ -76,7 +74,6 @@ window.addEventListener("DOMContentLoaded", () => {
       const words = searchInput.value.split(' ');
       const targetIndex = e.key === ' ' ? words.length - 2 : words.length - 1;
       const wordToTranslate = words[targetIndex];
-
       if (wordToTranslate && /[a-zA-Z]/.test(wordToTranslate)) {
         const tamilWord = await transliterate(wordToTranslate);
         words[targetIndex] = tamilWord;
@@ -85,31 +82,25 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // 3. Highlight Search Execution
   window.searchInPage = function() {
     const query = searchInput.value.trim();
-    
     const marks = content.querySelectorAll('mark.doc-highlight');
     marks.forEach(mark => {
-        const parent = mark.parentNode;
-        parent.replaceChild(document.createTextNode(mark.textContent), mark);
-        parent.normalize();
+      const parent = mark.parentNode;
+      parent.replaceChild(document.createTextNode(mark.textContent), mark);
+      parent.normalize();
     });
-
     if (!query) {
-        document.getElementById("match-count").textContent = "";
-        return;
+      document.getElementById("match-count").textContent = "";
+      return;
     }
-
-    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const regex = new RegExp(`(${escaped})(?![^<]*>)`, "gi");
+    const escaped = query.replace(/[.*+?^${}()|[\]\]/g, "\$&");
+    const regex = new RegExp(`(${escaped})`, "gi");
     content.innerHTML = content.innerHTML.replace(regex, `<mark class="doc-highlight" style="background:#cc0000;color:#fff;border-radius:2px;padding:0 2px;">$1</mark>`);
-
     const first = content.querySelector(".doc-highlight");
     if (first) first.scrollIntoView({behavior: "smooth", block: "center"});
-
     const count = content.querySelectorAll(".doc-highlight").length;
-    document.getElementById("match-count").textContent = count > 0 ? count + " matches" : "No matches";
+    document.getElementById("match-count").textContent = count > 0 ? count + (count > 1 ? " matches" : " match") : "No matches";
   };
 
   document.getElementById("doc-search-btn").addEventListener("click", searchInPage);
@@ -122,7 +113,10 @@ window.addEventListener("DOMContentLoaded", () => {
 </script>
 </head>
 <body>
-<header><a href="/">&#8592; Home</a><span>Periyar Archive</span></header>
+<header>
+  <a href="/">&#8592; Home</a>
+  <span>Periyar Archive</span>
+</header>
 <div class="doc-container">
 <h1>Thoughts of Periyar E.V.R. — Vol. 1, Part 1</h1>
 <span class="collection-label">Anaimuthu's Periyar Collection</span>
