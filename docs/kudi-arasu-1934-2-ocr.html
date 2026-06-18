@@ -4,74 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script data-goatcounter="https://periyararchive.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-<title>Kudi Arasu — 1934, Part 2 — Periyar Archive</title>
+<title>1934-2-ocr — Periyar Archive</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@400;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Noto Serif Tamil', 'Noto Serif', serif;
-    background: #111;
-    color: #ddd;
-    line-height: 1.8;
-  }
-  header {
-    background: #111;
-    color: #fff;
-    padding: 14px 30px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    border-bottom: 2px solid #cc0000;
-  }
-  header a {
-    color: #fff;
-    text-decoration: none;
-    font-size: 14px;
-    font-family: sans-serif;
-    border: 1px solid #555;
-    padding: 4px 12px;
-    border-radius: 3px;
-    white-space: nowrap;
-  }
+  body { font-family: 'Noto Serif Tamil', 'Noto Serif', serif; background: #111; color: #ddd; line-height: 1.8; }
+  header { background: #111; color: #fff; padding: 14px 30px; display: flex; align-items: center; gap: 20px; border-bottom: 2px solid #cc0000; }
+  header a { color: #fff; text-decoration: none; font-size: 14px; font-family: sans-serif; border: 1px solid #555; padding: 4px 12px; border-radius: 3px; white-space: nowrap; }
   header a:hover { border-color: #cc0000; color: #cc0000; }
-  header span {
-    font-size: 14px;
-    color: #aaa;
-    font-family: sans-serif;
-  }
-  .doc-container {
-    max-width: 780px;
-    margin: 40px auto;
-    padding: 0 48px 80px;
-  }
-  h1 {
-    font-size: 1.4em;
-    margin-bottom: 6px;
-    line-height: 1.4;
-    color: #fff;
-  }
-  .collection-label {
-    font-size: 0.85em;
-    color: #777;
-    font-family: sans-serif;
-    margin-bottom: 30px;
-    display: block;
-  }
-  #content {
-    white-space: pre-wrap;
-    font-size: 1.05em;
-    line-height: 1.9;
-    color: #ddd;
-  }
-  .search-banner {
-    background: #1e1e1e;
-    border-left: 3px solid #cc0000;
-    padding: 10px 18px;
-    margin-bottom: 24px;
-    font-family: sans-serif;
-    font-size: 14px;
-    color: #aaa;
-  }
+  header span { font-size: 14px; color: #aaa; font-family: sans-serif; }
+  .doc-container { max-width: 780px; margin: 40px auto; padding: 0 48px 80px; }
+  h1 { font-size: 1.4em; margin-bottom: 6px; line-height: 1.4; color: #fff; }
+  .collection-label { font-size: 0.85em; color: #777; font-family: sans-serif; margin-bottom: 30px; display: block; }
+  #content { white-space: pre-wrap; font-size: 1.05em; line-height: 1.9; color: #ddd; }
+  .search-banner { background: #1e1e1e; border-left: 3px solid #cc0000; padding: 10px 18px; margin-bottom: 24px; font-family: sans-serif; font-size: 14px; color: #aaa; }
 </style>
 <script>
 window.addEventListener("DOMContentLoaded", () => {
@@ -85,30 +31,41 @@ window.addEventListener("DOMContentLoaded", () => {
       <input id="doc-search" type="text" placeholder="Search within this document..."
         style="flex:1;min-width:200px;padding:6px 10px;background:#2a2a2a;color:#eee;border:1px solid #444;border-radius:3px;font-size:14px;font-family:sans-serif;"
         value="${term}">
-      <button onclick="searchInPage()" style="padding:6px 14px;background:#cc0000;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:14px;font-family:sans-serif;">Find</button>
+      <button id="doc-search-btn" style="padding:6px 14px;background:#cc0000;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:14px;font-family:sans-serif;">Find</button>
       <span id="match-count" style="font-size:13px;color:#888;font-family:sans-serif;"></span>
     </div>`;
   document.querySelector(".doc-container").insertBefore(searchBox, document.querySelector(".doc-container").firstChild);
 
   window.searchInPage = function() {
     const query = document.getElementById("doc-search").value.trim();
-    if (!query) return;
     const content = document.getElementById("content");
+
+    // 1. Safely remove old highlights
     const marks = content.querySelectorAll('mark.doc-highlight');
     marks.forEach(mark => {
         const parent = mark.parentNode;
         parent.replaceChild(document.createTextNode(mark.textContent), mark);
         parent.normalize();
     });
-    const escaped = query.replace(/[.*+?^${}()|[\]\]/g, "\$&");
-    const regex = new RegExp(escaped, "gi");
-    content.innerHTML = content.innerHTML.replace(regex, match => `<mark class="doc-highlight" style="background:#cc0000;color:#fff;border-radius:2px;padding:0 2px;">${match}</mark>`);
+
+    if (!query) {
+        document.getElementById("match-count").textContent = "";
+        return;
+    }
+
+    // 2. Add new highlights safely (ignoring HTML tags)
+    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const regex = new RegExp(`(${escaped})(?![^<]*>)`, "gi");
+    content.innerHTML = content.innerHTML.replace(regex, `<mark class="doc-highlight" style="background:#cc0000;color:#fff;border-radius:2px;padding:0 2px;">$1</mark>`);
+
     const first = content.querySelector(".doc-highlight");
     if (first) first.scrollIntoView({behavior: "smooth", block: "center"});
+
     const count = content.querySelectorAll(".doc-highlight").length;
-    document.getElementById("match-count").textContent = count > 0 ? `${count} match${count > 1 ? "es" : ""}` : "No matches";
+    document.getElementById("match-count").textContent = count > 0 ? count + " matches" : "No matches";
   };
 
+  document.getElementById("doc-search-btn").addEventListener("click", searchInPage);
   document.addEventListener("keydown", e => {
     if (e.key === "Enter" && document.activeElement.id === "doc-search") searchInPage();
   });
@@ -118,12 +75,9 @@ window.addEventListener("DOMContentLoaded", () => {
 </script>
 </head>
 <body>
-<header>
-  <a href="/">&#8592; Home</a>
-  <span>Periyar Archive</span>
-</header>
+<header><a href="/">&#8592; Home</a><span>Periyar Archive</span></header>
 <div class="doc-container">
-<h1>Kudi Arasu — 1934, Part 2</h1>
+<h1>1934-2-ocr</h1>
 <span class="collection-label">Kolathur Mani – Kudi Arasu Collection</span>
 <div id="content">
 குடி அரசு
@@ -6526,6 +6480,8 @@ A. ராமசாமி! முதலியாருக்கு ஆதரவ�
 விரக வேதனை  -  காதலர்க்குப்‌ பிரிவாலுண்டாகும்‌ துன்பம்‌  ஹானி  -  கேடு
 
 குடி அரசு (பகுத்தறிவு) - 1934 (2)  ௦
+
+</div>
 
 </div>
 </div>
