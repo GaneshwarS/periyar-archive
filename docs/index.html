@@ -135,7 +135,7 @@
       if (isDesktop) {
         // Wait for Pagefind to build the search bar
         const checkExist = setInterval(function() {
-          const searchInput = document.querySelector('.pagefind-ui__search-input');
+          const searchInput = document.querySelector('#search input');
           if (searchInput) {
             clearInterval(checkExist);
 

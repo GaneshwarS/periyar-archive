@@ -214,7 +214,8 @@ window.addEventListener("DOMContentLoaded", () => {{
     const query = document.getElementById("doc-search").value.trim();
     if (!query) return;
     const content = document.getElementById("content");
-    content.innerHTML = content.innerHTML.replace(/<mark class="doc-highlight">(.*?)<\/mark>/g, "$1");
+    // FIXED LINE: This regex matches any <mark> tag and safely extracts the text inside
+    content.innerHTML = content.innerHTML.replace(/<mark[^>]*>(.*?)<\/mark>/gi, "$1");
     const escaped = query.replace(/[.*+?^${{}}()|[\]\\]/g, "\\$&");
     const regex = new RegExp(escaped, "gi");
     content.innerHTML = content.innerHTML.replace(regex, match => `<mark class="doc-highlight" style="background:#cc0000;color:#fff;border-radius:2px;padding:0 2px;">${{match}}</mark>`);
@@ -389,7 +390,7 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
       if (isDesktop) {
         // Wait for Pagefind to build the search bar
         const checkExist = setInterval(function() {
-          const searchInput = document.querySelector('.pagefind-ui__search-input');
+          const searchInput = document.querySelector('#search input');
           if (searchInput) {
             clearInterval(checkExist);
 
