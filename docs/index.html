@@ -129,11 +129,10 @@
         }
       });
 
-      // 2. Device Check: Only run typing tool on Desktops/Laptops
+      // 2. Device Check
       const isDesktop = window.innerWidth > 768 && !(/Mobi|Android/i.test(navigator.userAgent));
 
       if (isDesktop) {
-        // Wait for Pagefind to build the search bar
         const checkExist = setInterval(function() {
           const searchInput = document.querySelector('#search input');
           if (searchInput) {
@@ -145,8 +144,6 @@
             
             const toggleBtn = document.createElement('button');
             toggleBtn.innerHTML = 'Keyboard: <strong>தமிழ் (ON)</strong>';
-            
-            // NEW DESIGN: Transparent background with a red outline and red text
             toggleBtn.style.cssText = 'background: transparent; color: #cc0000; border: 1px solid #cc0000; padding: 4px 12px; border-radius: 3px; font-family: sans-serif; font-size: 12px; cursor: pointer; transition: 0.2s;';
             
             toggleContainer.appendChild(toggleBtn);
@@ -159,28 +156,35 @@
               e.preventDefault();
               isTamil = !isTamil;
               toggleBtn.innerHTML = isTamil ? 'Keyboard: <strong>தமிழ் (ON)</strong>' : 'Keyboard: <strong>English (ON)</strong>';
-              
-              // NEW TOGGLE DESIGN: Switches to subtle grey when turned off
               toggleBtn.style.color = isTamil ? '#cc0000' : '#aaa';
               toggleBtn.style.borderColor = isTamil ? '#cc0000' : '#555';
-              
               searchInput.focus();
             });
 
-            // 4. Modern Transliteration Function (FIXED: GET request bypasses CORS/400 errors)
-            async function transliterate(text) {
-              if (!text.trim() || !/[a-zA-Z]/.test(text)) return text;
-              try {
-                const url = `https://inputtools.google.com/request?text=${encodeURIComponent(text)}&itc=ta-t-i0-und&num=1&cp=0&cs=1&ie=utf-8&oe=utf-8&app=jsapi`;
-                const response = await fetch(url);
-                const data = await response.json();
-                if (data[0] === 'SUCCESS') {
-                  return data[1][0][1][0];
+            // 4. Bulletproof JSONP Transliteration (Bypasses Browser CORS Blocks)
+            function transliterate(text) {
+              return new Promise((resolve) => {
+                if (!text.trim() || !/[a-zA-Z]/.test(text)) {
+                  resolve(text);
+                  return;
                 }
-              } catch (e) {
-                console.error("Transliteration error:", e);
-              }
-              return text;
+                const script = document.createElement('script');
+                const cbName = 'jsonp_cb_' + Math.round(100000 * Math.random());
+                
+                window[cbName] = function(data) {
+                  delete window[cbName];
+                  document.body.removeChild(script);
+                  if (data && data[0] === 'SUCCESS') {
+                    resolve(data[1][0][1][0]);
+                  } else {
+                    resolve(text);
+                  }
+                };
+                
+                script.onerror = function() { resolve(text); };
+                script.src = `https://inputtools.google.com/request?text=${text}&itc=ta-t-i0-und&num=1&cp=0&cs=1&ie=utf-8&oe=utf-8&app=demopage&cb=${cbName}`;
+                document.body.appendChild(script);
+              });
             }
 
             // 5. Listen for Spacebar or Enter
@@ -189,16 +193,13 @@
               
               if (e.key === ' ' || e.key === 'Enter') {
                 const words = searchInput.value.split(' ');
-                
                 const targetIndex = e.key === ' ' ? words.length - 2 : words.length - 1;
                 const wordToTranslate = words[targetIndex];
 
                 if (wordToTranslate && /[a-zA-Z]/.test(wordToTranslate)) {
                   const tamilWord = await transliterate(wordToTranslate);
                   words[targetIndex] = tamilWord;
-                  
                   searchInput.value = words.join(' ');
-                  
                   searchInput.dispatchEvent(new Event('input', { bubbles: true }));
                 }
               }

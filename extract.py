@@ -124,6 +124,7 @@ for folder_path, collection_name in collections.items():
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script data-goatcounter="https://periyararchive.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js"></script>
 <title>{display_title} — Periyar Archive</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@400;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -183,6 +184,12 @@ for folder_path, collection_name in collections.items():
     line-height: 1.9;
     color: #ddd;
   }}
+  .doc-highlight {{
+    background: #cc0000;
+    color: #fff;
+    border-radius: 2px;
+    padding: 0 2px;
+  }}
   .search-banner {{
     background: #1e1e1e;
     border-left: 3px solid #cc0000;
@@ -210,36 +217,32 @@ window.addEventListener("DOMContentLoaded", () => {{
     </div>`;
   document.querySelector(".doc-container").insertBefore(searchBox, document.querySelector(".doc-container").firstChild);
 
+  const content = document.getElementById("content");
+  const markInstance = new Mark(content);
+
   window.searchInPage = function() {{
     const query = document.getElementById("doc-search").value.trim();
-    const content = document.getElementById("content");
     
-    // 1. DOM-Safe cleanup of old highlights (prevents breaking the page structure)
-    const marks = content.querySelectorAll('mark.doc-highlight');
-    marks.forEach(mark => {{
-        const parent = mark.parentNode;
-        parent.replaceChild(document.createTextNode(mark.textContent), mark);
-        parent.normalize();
+    // Clear old highlights safely
+    markInstance.unmark({{
+      done: function() {{
+        if (!query) {{
+          document.getElementById("match-count").textContent = "";
+          return;
+        }}
+        
+        // Add new highlights safely
+        markInstance.mark(query, {{
+          className: "doc-highlight",
+          done: function(totalMatches) {{
+            const first = content.querySelector(".doc-highlight");
+            if (first) first.scrollIntoView({{behavior: "smooth", block: "center"}});
+            
+            document.getElementById("match-count").textContent = totalMatches > 0 ? `${{totalMatches}} match${{totalMatches > 1 ? "es" : ""}}` : "No matches";
+          }}
+        }});
+      }}
     }});
-
-    if (!query) {{
-        document.getElementById("match-count").textContent = "";
-        return;
-    }}
-
-    // 2. Escape regex characters safely
-    const escaped = query.replace(/[.*+?^${{}}()|[\\]\\\\]/g, '\\\\$&');
-    
-    // 3. Highlight text ONLY if it is outside of an HTML tag
-    const regex = new RegExp(`(?![^<]*>)${{escaped}}`, "gi");
-    content.innerHTML = content.innerHTML.replace(regex, match => `<mark class="doc-highlight" style="background:#cc0000;color:#fff;border-radius:2px;padding:0 2px;">${{match}}</mark>`);
-    
-    // 4. Update view and UI
-    const first = content.querySelector(".doc-highlight");
-    if (first) first.scrollIntoView({{behavior: "smooth", block: "center"}});
-    
-    const count = content.querySelectorAll(".doc-highlight").length;
-    document.getElementById("match-count").textContent = count > 0 ? `${{count}} match${{count > 1 ? "es" : ""}}` : "No matches";
   }};
 
   document.getElementById("doc-search-btn").addEventListener("click", searchInPage);
@@ -402,11 +405,10 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
         }
       });
 
-      // 2. Device Check: Only run typing tool on Desktops/Laptops
+      // 2. Device Check
       const isDesktop = window.innerWidth > 768 && !(/Mobi|Android/i.test(navigator.userAgent));
 
       if (isDesktop) {
-        // Wait for Pagefind to build the search bar
         const checkExist = setInterval(function() {
           const searchInput = document.querySelector('#search input');
           if (searchInput) {
@@ -418,8 +420,6 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
             
             const toggleBtn = document.createElement('button');
             toggleBtn.innerHTML = 'Keyboard: <strong>தமிழ் (ON)</strong>';
-            
-            // NEW DESIGN: Transparent background with a red outline and red text
             toggleBtn.style.cssText = 'background: transparent; color: #cc0000; border: 1px solid #cc0000; padding: 4px 12px; border-radius: 3px; font-family: sans-serif; font-size: 12px; cursor: pointer; transition: 0.2s;';
             
             toggleContainer.appendChild(toggleBtn);
@@ -432,28 +432,35 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
               e.preventDefault();
               isTamil = !isTamil;
               toggleBtn.innerHTML = isTamil ? 'Keyboard: <strong>தமிழ் (ON)</strong>' : 'Keyboard: <strong>English (ON)</strong>';
-              
-              // NEW TOGGLE DESIGN: Switches to subtle grey when turned off
               toggleBtn.style.color = isTamil ? '#cc0000' : '#aaa';
               toggleBtn.style.borderColor = isTamil ? '#cc0000' : '#555';
-              
               searchInput.focus();
             });
 
-            // 4. Modern Transliteration Function (FIXED: GET request bypasses CORS/400 errors)
-            async function transliterate(text) {
-              if (!text.trim() || !/[a-zA-Z]/.test(text)) return text;
-              try {
-                const url = `https://inputtools.google.com/request?text=${encodeURIComponent(text)}&itc=ta-t-i0-und&num=1&cp=0&cs=1&ie=utf-8&oe=utf-8&app=jsapi`;
-                const response = await fetch(url);
-                const data = await response.json();
-                if (data[0] === 'SUCCESS') {
-                  return data[1][0][1][0];
+            // 4. Bulletproof JSONP Transliteration (Bypasses Browser CORS Blocks)
+            function transliterate(text) {
+              return new Promise((resolve) => {
+                if (!text.trim() || !/[a-zA-Z]/.test(text)) {
+                  resolve(text);
+                  return;
                 }
-              } catch (e) {
-                console.error("Transliteration error:", e);
-              }
-              return text;
+                const script = document.createElement('script');
+                const cbName = 'jsonp_cb_' + Math.round(100000 * Math.random());
+                
+                window[cbName] = function(data) {
+                  delete window[cbName];
+                  document.body.removeChild(script);
+                  if (data && data[0] === 'SUCCESS') {
+                    resolve(data[1][0][1][0]);
+                  } else {
+                    resolve(text);
+                  }
+                };
+                
+                script.onerror = function() { resolve(text); };
+                script.src = `https://inputtools.google.com/request?text=${text}&itc=ta-t-i0-und&num=1&cp=0&cs=1&ie=utf-8&oe=utf-8&app=demopage&cb=${cbName}`;
+                document.body.appendChild(script);
+              });
             }
 
             // 5. Listen for Spacebar or Enter
@@ -462,16 +469,13 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
               
               if (e.key === ' ' || e.key === 'Enter') {
                 const words = searchInput.value.split(' ');
-                
                 const targetIndex = e.key === ' ' ? words.length - 2 : words.length - 1;
                 const wordToTranslate = words[targetIndex];
 
                 if (wordToTranslate && /[a-zA-Z]/.test(wordToTranslate)) {
                   const tamilWord = await transliterate(wordToTranslate);
                   words[targetIndex] = tamilWord;
-                  
                   searchInput.value = words.join(' ');
-                  
                   searchInput.dispatchEvent(new Event('input', { bubbles: true }));
                 }
               }
@@ -510,8 +514,8 @@ document.getElementById("browse-heading").addEventListener("click", function() {
 
 print("\nAll done. HTML files are in the docs/ folder.")
 print(f"Total documents processed: {len(index_links)}")
-# --- GENERATE ABOUT PAGE ---
 
+# --- GENERATE ABOUT PAGE ---
 about_html = """<!DOCTYPE html>
 <html lang="ta">
 <head>
