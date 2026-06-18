@@ -32,7 +32,14 @@
   <script src="/pagefind/pagefind-ui.js"></script>
   <script>
     window.addEventListener('DOMContentLoaded', () => {
-      new PagefindUI({ element: "#search", showImages: false });
+      // Initialize Pagefind with custom English placeholder
+      new PagefindUI({ 
+        element: "#search", 
+        showImages: false,
+        translations: {
+          placeholder: "Search: press space for Tamil transliteration..."
+        }
+      });
 
       const isDesktop = window.innerWidth > 768 && !(/Mobi|Android/i.test(navigator.userAgent));
 
@@ -62,24 +69,19 @@
               searchInput.focus();
             });
 
-            // BULLETPROOF JSONP (No External Library Loading)
-            function transliterate(text) {
-              return new Promise((resolve) => {
-                if (!text.trim() || !/[a-zA-Z]/.test(text)) return resolve(text);
-                const script = document.createElement('script');
-                const cbName = 'jsonp_cb_' + Math.round(100000 * Math.random());
-                
-                window[cbName] = function(data) {
-                  delete window[cbName];
-                  document.body.removeChild(script);
-                  if (data && data[0] === 'SUCCESS') resolve(data[1][0][1][0]);
-                  else resolve(text);
-                };
-                
-                script.onerror = function() { resolve(text); };
-                script.src = `https://inputtools.google.com/request?text=${text}&itc=ta-t-i0-und&num=1&cp=0&cs=1&ie=utf-8&oe=utf-8&app=demopage&cb=${cbName}`;
-                document.body.appendChild(script);
-              });
+            async function transliterate(text) {
+              if (!text.trim() || !/[a-zA-Z]/.test(text)) return text;
+              try {
+                const url = `https://inputtools.google.com/request?text=${encodeURIComponent(text)}&itc=ta-t-i0-und&num=1&cp=0&cs=1&ie=utf-8&oe=utf-8&app=jsapi`;
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data && data[0] === 'SUCCESS') {
+                  return data[1][0][1][0];
+                }
+              } catch (e) {
+                console.error("Transliteration blocked:", e);
+              }
+              return text;
             }
 
             searchInput.addEventListener('keyup', async (e) => {

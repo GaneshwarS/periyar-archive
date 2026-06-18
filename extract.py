@@ -16,17 +16,21 @@ title_map = {
 os.makedirs("docs", exist_ok=True)
 index_links = []
 
-# --- SAFE IN-PAGE SEARCH SCRIPT ---
+# --- SAFE IN-PAGE SEARCH SCRIPT (NOW WITH TRANSLITERATION) ---
 doc_search_script = """
 window.addEventListener("DOMContentLoaded", () => {
   const params = new URLSearchParams(window.location.search);
   const term = decodeURIComponent(params.get("highlight") || "");
 
+  // 1. Build the Search UI with the Toggle Button
   const searchBox = document.createElement("div");
   searchBox.className = "search-banner";
   searchBox.innerHTML = `
+    <div style="display:flex; justify-content: flex-end; margin-bottom: 8px;">
+      <button id="doc-toggle-btn" style="background: transparent; color: #cc0000; border: 1px solid #cc0000; padding: 4px 12px; border-radius: 3px; font-family: sans-serif; font-size: 12px; cursor: pointer; transition: 0.2s;">Keyboard: <strong>தமிழ் (ON)</strong></button>
+    </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-      <input id="doc-search" type="text" placeholder="Search within this document..."
+      <input id="doc-search" type="text" placeholder="Search: press space for Tamil transliteration..."
         style="flex:1;min-width:200px;padding:6px 10px;background:#2a2a2a;color:#eee;border:1px solid #444;border-radius:3px;font-size:14px;font-family:sans-serif;"
         value="${term}">
       <button id="doc-search-btn" style="padding:6px 14px;background:#cc0000;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:14px;font-family:sans-serif;">Find</button>
@@ -34,11 +38,55 @@ window.addEventListener("DOMContentLoaded", () => {
     </div>`;
   document.querySelector(".doc-container").insertBefore(searchBox, document.querySelector(".doc-container").firstChild);
 
-  window.searchInPage = function() {
-    const query = document.getElementById("doc-search").value.trim();
-    const content = document.getElementById("content");
+  const searchInput = document.getElementById("doc-search");
+  const toggleBtn = document.getElementById("doc-toggle-btn");
+  const content = document.getElementById("content");
 
-    // 1. Safely remove old highlights
+  // 2. Transliteration Logic for In-Page Search
+  let isTamil = true;
+  toggleBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    isTamil = !isTamil;
+    toggleBtn.innerHTML = isTamil ? 'Keyboard: <strong>தமிழ் (ON)</strong>' : 'Keyboard: <strong>English (ON)</strong>';
+    toggleBtn.style.color = isTamil ? '#cc0000' : '#aaa';
+    toggleBtn.style.borderColor = isTamil ? '#cc0000' : '#555';
+    searchInput.focus();
+  });
+
+  async function transliterate(text) {
+    if (!text.trim() || !/[a-zA-Z]/.test(text)) return text;
+    try {
+      const url = `https://inputtools.google.com/request?text=${encodeURIComponent(text)}&itc=ta-t-i0-und&num=1&cp=0&cs=1&ie=utf-8&oe=utf-8&app=jsapi`;
+      const response = await fetch(url);
+      const data = await response.json();
+      if (data && data[0] === 'SUCCESS') {
+        return data[1][0][1][0];
+      }
+    } catch (e) {
+      console.error("Transliteration blocked:", e);
+    }
+    return text;
+  }
+
+  searchInput.addEventListener('keyup', async (e) => {
+    if (!isTamil) return;
+    if (e.key === ' ' || e.key === 'Enter') {
+      const words = searchInput.value.split(' ');
+      const targetIndex = e.key === ' ' ? words.length - 2 : words.length - 1;
+      const wordToTranslate = words[targetIndex];
+
+      if (wordToTranslate && /[a-zA-Z]/.test(wordToTranslate)) {
+        const tamilWord = await transliterate(wordToTranslate);
+        words[targetIndex] = tamilWord;
+        searchInput.value = words.join(' ');
+      }
+    }
+  });
+
+  // 3. Highlight Search Execution
+  window.searchInPage = function() {
+    const query = searchInput.value.trim();
+    
     const marks = content.querySelectorAll('mark.doc-highlight');
     marks.forEach(mark => {
         const parent = mark.parentNode;
@@ -51,7 +99,6 @@ window.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    // 2. Add new highlights safely (ignoring HTML tags)
     const escaped = query.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\$&");
     const regex = new RegExp(`(${escaped})(?![^<]*>)`, "gi");
     content.innerHTML = content.innerHTML.replace(regex, `<mark class="doc-highlight" style="background:#cc0000;color:#fff;border-radius:2px;padding:0 2px;">$1</mark>`);
@@ -193,7 +240,14 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
   <script src="/pagefind/pagefind-ui.js"></script>
   <script>
     window.addEventListener('DOMContentLoaded', () => {
-      new PagefindUI({ element: "#search", showImages: false });
+      // Initialize Pagefind with custom English placeholder
+      new PagefindUI({ 
+        element: "#search", 
+        showImages: false,
+        translations: {
+          placeholder: "Search: press space for Tamil transliteration..."
+        }
+      });
 
       const isDesktop = window.innerWidth > 768 && !(/Mobi|Android/i.test(navigator.userAgent));
 
@@ -223,24 +277,19 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
               searchInput.focus();
             });
 
-            // BULLETPROOF JSONP (No External Library Loading)
-            function transliterate(text) {
-              return new Promise((resolve) => {
-                if (!text.trim() || !/[a-zA-Z]/.test(text)) return resolve(text);
-                const script = document.createElement('script');
-                const cbName = 'jsonp_cb_' + Math.round(100000 * Math.random());
-                
-                window[cbName] = function(data) {
-                  delete window[cbName];
-                  document.body.removeChild(script);
-                  if (data && data[0] === 'SUCCESS') resolve(data[1][0][1][0]);
-                  else resolve(text);
-                };
-                
-                script.onerror = function() { resolve(text); };
-                script.src = `https://inputtools.google.com/request?text=${text}&itc=ta-t-i0-und&num=1&cp=0&cs=1&ie=utf-8&oe=utf-8&app=demopage&cb=${cbName}`;
-                document.body.appendChild(script);
-              });
+            async function transliterate(text) {
+              if (!text.trim() || !/[a-zA-Z]/.test(text)) return text;
+              try {
+                const url = `https://inputtools.google.com/request?text=${encodeURIComponent(text)}&itc=ta-t-i0-und&num=1&cp=0&cs=1&ie=utf-8&oe=utf-8&app=jsapi`;
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data && data[0] === 'SUCCESS') {
+                  return data[1][0][1][0];
+                }
+              } catch (e) {
+                console.error("Transliteration blocked:", e);
+              }
+              return text;
             }
 
             searchInput.addEventListener('keyup', async (e) => {
