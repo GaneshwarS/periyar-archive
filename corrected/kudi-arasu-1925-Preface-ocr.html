@@ -2,34 +2,125 @@
 <html lang="ta">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script data-goatcounter="https://periyararchive.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <title>Kudi Arasu — 1925 (Preface) — Periyar Archive</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@400;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Serif Tamil', 'Noto Serif', serif;
+    background: #111;
+    color: #ddd;
+    line-height: 1.8;
+  }
+  header {
+    background: #111;
+    color: #fff;
+    padding: 14px 30px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-bottom: 2px solid #cc0000;
+  }
+  header a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    font-family: sans-serif;
+    border: 1px solid #555;
+    padding: 4px 12px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  header a:hover { border-color: #cc0000; color: #cc0000; }
+  header span {
+    font-size: 14px;
+    color: #aaa;
+    font-family: sans-serif;
+  }
+  .doc-container {
+    max-width: 780px;
+    margin: 40px auto;
+    padding: 0 48px 80px;
+  }
+  h1 {
+    font-size: 1.4em;
+    margin-bottom: 6px;
+    line-height: 1.4;
+    color: #fff;
+  }
+  .collection-label {
+    font-size: 0.85em;
+    color: #777;
+    font-family: sans-serif;
+    margin-bottom: 30px;
+    display: block;
+  }
+  #content {
+    white-space: pre-wrap;
+    font-size: 1.05em;
+    line-height: 1.9;
+    color: #ddd;
+  }
+  .search-banner {
+    background: #1e1e1e;
+    border-left: 3px solid #cc0000;
+    padding: 10px 18px;
+    margin-bottom: 24px;
+    font-family: sans-serif;
+    font-size: 14px;
+    color: #aaa;
+  }
+</style>
 <script>
 window.addEventListener("DOMContentLoaded", () => {
   const params = new URLSearchParams(window.location.search);
   const term = decodeURIComponent(params.get("highlight") || "");
-  if (term) {
-    const banner = document.createElement("div");
-    banner.style.cssText = "background:#1e1e1e;border-left:3px solid #cc0000;padding:10px 18px;font-family:sans-serif;font-size:14px;color:#aaa;";
-    banner.innerHTML = "🔍 Use <strong>Ctrl+F</strong> (or Cmd+F on Mac) to find your search term on this page.";
-    document.body.insertBefore(banner, document.body.firstChild);
-  }
+
+  const searchBox = document.createElement("div");
+  searchBox.className = "search-banner";
+  searchBox.innerHTML = `
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <input id="doc-search" type="text" placeholder="Search within this document..."
+        style="flex:1;min-width:200px;padding:6px 10px;background:#2a2a2a;color:#eee;border:1px solid #444;border-radius:3px;font-size:14px;font-family:sans-serif;"
+        value="${term}">
+      <button onclick="searchInPage()" style="padding:6px 14px;background:#cc0000;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:14px;font-family:sans-serif;">Find</button>
+      <span id="match-count" style="font-size:13px;color:#888;font-family:sans-serif;"></span>
+    </div>`;
+  document.querySelector(".doc-container").insertBefore(searchBox, document.querySelector(".doc-container").firstChild);
+
+  window.searchInPage = function() {
+    const query = document.getElementById("doc-search").value.trim();
+    if (!query) return;
+    const content = document.getElementById("content");
+    content.innerHTML = content.innerHTML.replace(/<mark class="doc-highlight">(.*?)<\/mark>/g, "$1");
+    const escaped = query.replace(/[.*+?^${}()|[\]\]/g, "\$&");
+    const regex = new RegExp(escaped, "gi");
+    content.innerHTML = content.innerHTML.replace(regex, match => `<mark class="doc-highlight" style="background:#cc0000;color:#fff;border-radius:2px;padding:0 2px;">${match}</mark>`);
+    const first = content.querySelector(".doc-highlight");
+    if (first) first.scrollIntoView({behavior: "smooth", block: "center"});
+    const count = content.querySelectorAll(".doc-highlight").length;
+    document.getElementById("match-count").textContent = count > 0 ? `${count} match${count > 1 ? "es" : ""}` : "No matches";
+  };
+
+  document.addEventListener("keydown", e => {
+    if (e.key === "Enter" && document.activeElement.id === "doc-search") searchInPage();
+  });
+
+  if (term) searchInPage();
 });
 </script>
-<style>
-  body { background: #111 !important; color: #ddd !important; }
-  h1 { color: #fff !important; }
-  .collection-label { color: #777 !important; }
-  #content { color: #ddd !important; }
-  a { color: #ccc !important; }
-</style>
 </head>
 <body>
-<div style="margin-bottom:15px;"><a href="/" style="text-decoration:none;background:#222;color:#fff;padding:6px 14px;border-radius:4px;font-family:sans-serif;font-size:14px;">&#8592; Home</a></div>
-
+<header>
+  <a href="/">&#8592; Home</a>
+  <span>Periyar Archive</span>
+</header>
+<div class="doc-container">
 <h1>Kudi Arasu — 1925 (Preface)</h1>
-<p><em>Collection: Kolathur Mani – Kudi Arasu Collection</em></p>
+<span class="collection-label">Kolathur Mani – Kudi Arasu Collection</span>
 <div id="content">
-<div id="content" style="white-space: pre-wrap; font-family: sans-serif;">
 
 குடி அரசு
 
@@ -68,32 +159,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
 கூட்டுழைப்பின் விளைச்சல்
 
-1925 ஆம் ஆண்டில் தொடங்கப்பட்டு 1949 நவம்பர் முடிய வெளிவந்த 'குடி அரசு' 
-வார ஏடு தமிழக வரலாற்றுப் போக் கையும் அதனோடு தொடர்புள்ள இந்திய 
-வரலாற்றுப் போக்கை யும் சமூகப்புரட்சிப் பார்வையில் புரிந்து கொள்ளவும்; 
-பெரியாரின் பொதுவாழ்வில் நிகழ்ந்த இயங்கியல் மாற்றங்களையும், 
-கொள்கை, வேலைத்திட்ட வளர்ச்சிப் போக்குகளையும் வெளிப்படுத்தவுமான 
-மிகச்சிறந்த ஆவணமாகும்.
+1925 ஆம் ஆண்டில் தொடங்கப்பட்டு 1949 நவம்பர் முடிய வெளிவந்த 'குடி அரசு' வார ஏடு தமிழக வரலாற்றுப் போக் கையும் அதனோடு தொடர்புள்ள இந்திய வரலாற்றுப் போக்கை யும் சமூகப்புரட்சிப் பார்வையில் புரிந்து கொள்ளவும்; பெரியாரின் பொதுவாழ்வில் நிகழ்ந்த இயங்கியல் மாற்றங்களையும், கொள்கை, வேலைத்திட்ட வளர்ச்சிப் போக்குகளையும் வெளிப்படுத்தவுமான மிகச்சிறந்த ஆவணமாகும்.
 
-பெரியார் காங்கிரசில் பணியாற்றிய கால கட்டம் நெடு கிலும் தொய்வின்றி 
-வலியுறுத்தி வந்த வகுப்புரிமை கோரிக்கை கள் சூழ்ச்சியாக ஏமாற்றப்பட்டே 
-வந்ததன் உச்சமாய் 1925 நவம்பர் 21, 22 நாள்களில் காஞ்சிபுரத்தில் 
-நடைபெற்ற மாநில மாநாட்டில் கட்சி விதிகளுக்கு இணங்க உரிய 
-எண்ணிக்கை உறுப்பினர்களுக் கும் மேலதிகமாய் ஒப்புதல் பெற்று முன் 
-வைத்த வகுப்புரிமைத் தீர்மானம் விவாதத்துக்குக்கூட எடுத்துக்கொள்ளப்படாமல் 
-புறக்கணிக்கப்பட்டதால் தன் நண்பர்களுடன் வெளியேறி 
-சுயமரியாதை இயக்கம் கண்டார்.
+பெரியார் காங்கிரசில் பணியாற்றிய கால கட்டம் நெடு கிலும் தொய்வின்றி வலியுறுத்தி வந்த வகுப்புரிமை கோரிக்கை கள் சூழ்ச்சியாக ஏமாற்றப்பட்டே வந்ததன் உச்சமாய் 1925 நவம்பர் 21, 22 நாள்களில் காஞ்சிபுரத்தில் நடைபெற்ற மாநில மாநாட்டில் கட்சி விதிகளுக்கு இணங்க உரிய எண்ணிக்கை உறுப்பினர்களுக் கும் மேலதிகமாய் ஒப்புதல் பெற்று முன் வைத்த வகுப்புரிமைத் தீர்மானம் விவாதத்துக்குக்கூட எடுத்துக்கொள்ளப்படாமல் புறக்கணிக்கப்பட்டதால் தன் நண்பர்களுடன் வெளியேறி சுயமரியாதை இயக்கம் கண்டார்.
 
-சுயமரியாதை இயக்கம் சுடர்விட்டுப் பரவி காட்டாற்று வெள்ளம்போல் 
-சமுதாயக் கசடுகளை அடித்துச் சிதைத்தவாறு முழு வீச்சோடு களமிறங்கியது. 
-1938 டிசம்பர் இறுதி நாட்களில் சென்னையில் நடைபெற்ற மாநாட்டில் 
-நீதிக்கட்சி என்னும் தென் இந்திய நலஉரிமைச் சங்கத்தின் தலைவராக 
-இந்தி எதிர்ப்புக்காய் சிறைப்பட்டிருந்த நிலையிலேயே 
-பெரியார் தேர்ந்தெடுக்கப் பட்டார். முற்று முழுதாக வேறு திசை 
-விலகலின்றி சமுதாய சமத்துவம், பகுத்தறிவுப் பணிகளை மட்டுமே 
-ஆற்றிவந்த அருமை யான காலகட்டம் 1925 முதல் 1938 வரையிலான காலமாகும்.
-
-3.குடி அரசு1925.
+சுயமரியாதை இயக்கம் சுடர்விட்டுப் பரவி காட்டாற்று வெள்ளம்போல் சமுதாயக் கசடுகளை அடித்துச் சிதைத்தவாறு முழு வீச்சோடு களமிறங்கியது. 1938 டிசம்பர் இறுதி நாட்களில் சென்னையில் நடைபெற்ற மாநாட்டில் நீதிக்கட்சி என்னும் தென் இந்திய நலஉரிமைச் சங்கத்தின் தலைவராக இந்தி எதிர்ப்புக்காய் சிறைப்பட்டிருந்த நிலையிலேயே பெரியார் தேர்ந்தெடுக்கப் பட்டார். முற்று முழுதாக வேறு திசை விலகலின்றி சமுதாய சமத்துவம், பகுத்தறிவுப் பணிகளை மட்டுமே ஆற்றிவந்த அருமை யான காலகட்டம் 1925 முதல் 1938 வரையிலான காலமாகும்.
 
 
 இந்தக்‌ கால இடைவெளியில்‌ குடி அரசு' ஏட்டில்‌ வெளி 

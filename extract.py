@@ -64,13 +64,17 @@ for folder_path, collection_name in collections.items():
         try:
             doc = fitz.open(filepath)
             full_text = ""
-            for page in doc:
-                blocks = page.get_text("blocks")
-                blocks = sorted(blocks, key=lambda b: (b[1], b[0]))
-                for block in blocks:
-                    block_text = block[4].strip()
-                    if block_text:
-                        full_text += block_text + "\n\n"
+            if "Anaimuthu" in collection_name:
+                for page in doc:
+                    blocks = page.get_text("blocks")
+                    blocks = sorted(blocks, key=lambda b: (b[1], b[0]))
+                    for block in blocks:
+                        block_text = block[4].strip()
+                        if block_text:
+                            full_text += block_text + "\n\n"
+            else:
+                for page in doc:
+                    full_text += page.get_text() + "\n\n"
             doc.close()
         except Exception as e:
             print(f"  ERROR reading {filename}: {e}")
