@@ -64,7 +64,7 @@ for folder_path, collection_name in collections.items():
         try:
             doc = fitz.open(filepath)
             full_text = ""
-            if "Anaimuthu" in collection_name:
+            if "Anaimuthu" in collection_name or "Revolt" in filename:
                 for page in doc:
                     blocks = page.get_text("blocks")
                     blocks = sorted(blocks, key=lambda b: (b[1], b[0]))
@@ -73,8 +73,37 @@ for folder_path, collection_name in collections.items():
                         if block_text:
                             full_text += block_text + "\n\n"
             else:
+                # COLUMN-AWARE EXTRACTION FOR KUDI ARASU
                 for page in doc:
-                    full_text += page.get_text() + "\n\n"
+                    blocks = page.get_text("blocks")
+                    mid_x = page.rect.width / 2  # Find the physical center of the page
+                    
+                    left_col = []
+                    right_col = []
+                    
+                    for b in blocks:
+                        if b[6] == 0: # Ensure it is a text block, not an image
+                            # Sort block into left or right column based on its starting X coordinate
+                            if b[0] < mid_x:
+                                left_col.append(b)
+                            else:
+                                right_col.append(b)
+                    
+                    # Sort blocks vertically (Y coordinate) within each column
+                    left_col.sort(key=lambda b: b[1])
+                    right_col.sort(key=lambda b: b[1])
+                    
+                    # Read all of the left column, then all of the right column
+                    for block in (left_col + right_col):
+                        block_text = block[4].strip()
+                        
+                        # Since titles and paragraphs are isolated in their own blocks,
+                        # we can safely swap the internal newlines for spaces to fix CSS wrapping.
+                        clean_text = block_text.replace("\n", " ")
+                        
+                        if clean_text:
+                            # Re-add the double newline to preserve spacing between titles/paragraphs
+                            full_text += clean_text + "\n\n"
             doc.close()
         except Exception as e:
             print(f"  ERROR reading {filename}: {e}")
