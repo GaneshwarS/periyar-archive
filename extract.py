@@ -212,19 +212,37 @@ window.addEventListener("DOMContentLoaded", () => {{
 
   window.searchInPage = function() {{
     const query = document.getElementById("doc-search").value.trim();
-    if (!query) return;
     const content = document.getElementById("content");
-    // FIXED LINE: This regex matches any <mark> tag and safely extracts the text inside
-    content.innerHTML = content.innerHTML.replace(/<mark[^>]*>(.*?)<\/mark>/gi, "$1");
-    const escaped = query.replace(/[.*+?^${{}}()|[\]\\]/g, "\\$&");
-    const regex = new RegExp(escaped, "gi");
+    
+    // 1. DOM-Safe cleanup of old highlights (prevents breaking the page structure)
+    const marks = content.querySelectorAll('mark.doc-highlight');
+    marks.forEach(mark => {{
+        const parent = mark.parentNode;
+        parent.replaceChild(document.createTextNode(mark.textContent), mark);
+        parent.normalize();
+    }});
+
+    if (!query) {{
+        document.getElementById("match-count").textContent = "";
+        return;
+    }}
+
+    // 2. Escape regex characters safely
+    const escaped = query.replace(/[.*+?^${{}}()|[\\]\\\\]/g, '\\\\$&');
+    
+    // 3. Highlight text ONLY if it is outside of an HTML tag
+    const regex = new RegExp(`(?![^<]*>)${{escaped}}`, "gi");
     content.innerHTML = content.innerHTML.replace(regex, match => `<mark class="doc-highlight" style="background:#cc0000;color:#fff;border-radius:2px;padding:0 2px;">${{match}}</mark>`);
+    
+    // 4. Update view and UI
     const first = content.querySelector(".doc-highlight");
     if (first) first.scrollIntoView({{behavior: "smooth", block: "center"}});
+    
     const count = content.querySelectorAll(".doc-highlight").length;
     document.getElementById("match-count").textContent = count > 0 ? `${{count}} match${{count > 1 ? "es" : ""}}` : "No matches";
   }};
-document.getElementById("doc-search-btn").addEventListener("click", searchInPage);
+
+  document.getElementById("doc-search-btn").addEventListener("click", searchInPage);
   document.addEventListener("keydown", e => {{
     if (e.key === "Enter" && document.activeElement.id === "doc-search") searchInPage();
   }});
@@ -422,13 +440,12 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
               searchInput.focus();
             });
 
-            // 4. Modern Transliteration Function
+            // 4. Modern Transliteration Function (FIXED: GET request bypasses CORS/400 errors)
             async function transliterate(text) {
-              if (!text.trim()) return text;
+              if (!text.trim() || !/[a-zA-Z]/.test(text)) return text;
               try {
-                const response = await fetch(`https://inputtools.google.com/request?text=${text}&itc=ta-t-i0-und&num=1`, {
-                  method: 'POST'
-                });
+                const url = `https://inputtools.google.com/request?text=${encodeURIComponent(text)}&itc=ta-t-i0-und&num=1&cp=0&cs=1&ie=utf-8&oe=utf-8&app=jsapi`;
+                const response = await fetch(url);
                 const data = await response.json();
                 if (data[0] === 'SUCCESS') {
                   return data[1][0][1][0];

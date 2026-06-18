@@ -167,13 +167,12 @@
               searchInput.focus();
             });
 
-            // 4. Modern Transliteration Function
+            // 4. Modern Transliteration Function (FIXED: GET request bypasses CORS/400 errors)
             async function transliterate(text) {
-              if (!text.trim()) return text;
+              if (!text.trim() || !/[a-zA-Z]/.test(text)) return text;
               try {
-                const response = await fetch(`https://inputtools.google.com/request?text=${text}&itc=ta-t-i0-und&num=1`, {
-                  method: 'POST'
-                });
+                const url = `https://inputtools.google.com/request?text=${encodeURIComponent(text)}&itc=ta-t-i0-und&num=1&cp=0&cs=1&ie=utf-8&oe=utf-8&app=jsapi`;
+                const response = await fetch(url);
                 const data = await response.json();
                 if (data[0] === 'SUCCESS') {
                   return data[1][0][1][0];
