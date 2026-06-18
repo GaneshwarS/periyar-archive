@@ -94,7 +94,12 @@ window.addEventListener("DOMContentLoaded", () => {
     const query = document.getElementById("doc-search").value.trim();
     if (!query) return;
     const content = document.getElementById("content");
-    content.innerHTML = content.innerHTML.replace(/<mark class="doc-highlight">(.*?)<\/mark>/g, "$1");
+    const marks = content.querySelectorAll('mark.doc-highlight');
+    marks.forEach(mark => {
+        const parent = mark.parentNode;
+        parent.replaceChild(document.createTextNode(mark.textContent), mark);
+        parent.normalize();
+    });
     const escaped = query.replace(/[.*+?^${}()|[\]\]/g, "\$&");
     const regex = new RegExp(escaped, "gi");
     content.innerHTML = content.innerHTML.replace(regex, match => `<mark class="doc-highlight" style="background:#cc0000;color:#fff;border-radius:2px;padding:0 2px;">${match}</mark>`);

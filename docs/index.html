@@ -106,10 +106,11 @@
 <div class="main">
   <p class="description" style="margin-top:28px;">Search across the collected volumes of Periyar's writings published by V Anaimuthu (1974 edition) and the Kudi Arasu and Revolt collections published by Kolathur Mani.</p>
   <div id="search"></div>
-  <script src="/pagefind/pagefind-ui.js" defer></script>
+  
+  <script src="/pagefind/pagefind-ui.js"></script>
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
   <script>
     window.addEventListener('DOMContentLoaded', () => {
-      // 1. Initialize Pagefind
       new PagefindUI({
         element: "#search",
         showImages: false,
@@ -128,87 +129,60 @@
           searching: "Searching for [SEARCH_TERM]..."
         }
       });
-
-      // 2. Device Check
-      const isDesktop = window.innerWidth > 768 && !(/Mobi|Android/i.test(navigator.userAgent));
-
-      if (isDesktop) {
-        const checkExist = setInterval(function() {
-          const searchInput = document.querySelector('#search input');
-          if (searchInput) {
-            clearInterval(checkExist);
-
-            // 3. Create the Toggle Button UI
-            const toggleContainer = document.createElement('div');
-            toggleContainer.style.cssText = 'display: flex; justify-content: flex-end; margin-bottom: 8px;';
-            
-            const toggleBtn = document.createElement('button');
-            toggleBtn.innerHTML = 'Keyboard: <strong>தமிழ் (ON)</strong>';
-            toggleBtn.style.cssText = 'background: transparent; color: #cc0000; border: 1px solid #cc0000; padding: 4px 12px; border-radius: 3px; font-family: sans-serif; font-size: 12px; cursor: pointer; transition: 0.2s;';
-            
-            toggleContainer.appendChild(toggleBtn);
-            const searchDiv = document.getElementById('search');
-            searchDiv.parentNode.insertBefore(toggleContainer, searchDiv);
-
-            // Toggle Logic
-            let isTamil = true;
-            toggleBtn.addEventListener('click', (e) => {
-              e.preventDefault();
-              isTamil = !isTamil;
-              toggleBtn.innerHTML = isTamil ? 'Keyboard: <strong>தமிழ் (ON)</strong>' : 'Keyboard: <strong>English (ON)</strong>';
-              toggleBtn.style.color = isTamil ? '#cc0000' : '#aaa';
-              toggleBtn.style.borderColor = isTamil ? '#cc0000' : '#555';
-              searchInput.focus();
-            });
-
-            // 4. Bulletproof JSONP Transliteration (Bypasses Browser CORS Blocks)
-            function transliterate(text) {
-              return new Promise((resolve) => {
-                if (!text.trim() || !/[a-zA-Z]/.test(text)) {
-                  resolve(text);
-                  return;
-                }
-                const script = document.createElement('script');
-                const cbName = 'jsonp_cb_' + Math.round(100000 * Math.random());
-                
-                window[cbName] = function(data) {
-                  delete window[cbName];
-                  document.body.removeChild(script);
-                  if (data && data[0] === 'SUCCESS') {
-                    resolve(data[1][0][1][0]);
-                  } else {
-                    resolve(text);
-                  }
-                };
-                
-                script.onerror = function() { resolve(text); };
-                script.src = `https://inputtools.google.com/request?text=${text}&itc=ta-t-i0-und&num=1&cp=0&cs=1&ie=utf-8&oe=utf-8&app=demopage&cb=${cbName}`;
-                document.body.appendChild(script);
-              });
-            }
-
-            // 5. Listen for Spacebar or Enter
-            searchInput.addEventListener('keyup', async (e) => {
-              if (!isTamil) return;
-              
-              if (e.key === ' ' || e.key === 'Enter') {
-                const words = searchInput.value.split(' ');
-                const targetIndex = e.key === ' ' ? words.length - 2 : words.length - 1;
-                const wordToTranslate = words[targetIndex];
-
-                if (wordToTranslate && /[a-zA-Z]/.test(wordToTranslate)) {
-                  const tamilWord = await transliterate(wordToTranslate);
-                  words[targetIndex] = tamilWord;
-                  searchInput.value = words.join(' ');
-                  searchInput.dispatchEvent(new Event('input', { bubbles: true }));
-                }
-              }
-            });
-          }
-        }, 100);
-      }
     });
+
+    const isDesktop = window.innerWidth > 768 && !(/Mobi|Android/i.test(navigator.userAgent));
+
+    if (isDesktop) {
+        google.load("elements", "1", { packages: "transliteration" });
+        google.setOnLoadCallback(function() {
+            const checkExist = setInterval(function() {
+                const searchInput = document.querySelector('#search input');
+                if (searchInput) {
+                    clearInterval(checkExist);
+
+                    const toggleContainer = document.createElement('div');
+                    toggleContainer.style.cssText = 'display: flex; justify-content: flex-end; margin-bottom: 8px;';
+                    
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = 'Keyboard: <strong>தமிழ் (ON)</strong>';
+                    toggleBtn.style.cssText = 'background: transparent; color: #cc0000; border: 1px solid #cc0000; padding: 4px 12px; border-radius: 3px; font-family: sans-serif; font-size: 12px; cursor: pointer; transition: 0.2s;';
+                    
+                    toggleContainer.appendChild(toggleBtn);
+                    const searchDiv = document.getElementById('search');
+                    searchDiv.parentNode.insertBefore(toggleContainer, searchDiv);
+
+                    const options = {
+                        sourceLanguage: google.elements.transliteration.LanguageCode.ENGLISH,
+                        destinationLanguage: [google.elements.transliteration.LanguageCode.TAMIL],
+                        shortcutKey: 'ctrl+m',
+                        transliterationEnabled: true
+                    };
+                    
+                    const control = new google.elements.transliteration.TransliterationControl(options);
+                    control.makeTransliteratable([searchInput]);
+
+                    toggleBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        if (control.isTransliterationEnabled()) {
+                            control.disableTransliteration();
+                            toggleBtn.innerHTML = 'Keyboard: <strong>English (ON)</strong>';
+                            toggleBtn.style.color = '#aaa';
+                            toggleBtn.style.borderColor = '#555';
+                        } else {
+                            control.enableTransliteration();
+                            toggleBtn.innerHTML = 'Keyboard: <strong>தமிழ் (ON)</strong>';
+                            toggleBtn.style.color = '#cc0000';
+                            toggleBtn.style.borderColor = '#cc0000';
+                        }
+                        searchInput.focus();
+                    });
+                }
+            }, 100);
+        });
+    }
   </script>
+
   <p class="notes"><strong>Note for Tamil searches:</strong> The search may return words sharing similar characters. For example, a search for "மானம்" might also return results including "மேன்மை".</p>
   <p class="contact">For questions or feedback: <a href="mailto:contact@periyararchive.in">contact@periyararchive.in</a></p>
   <hr>

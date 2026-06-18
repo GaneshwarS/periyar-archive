@@ -52,6 +52,97 @@ os.makedirs("docs", exist_ok=True)
 
 index_links = []
 
+# --- SAFE IN-PAGE SEARCH SCRIPT (NO EXTERNAL LIBRARIES) ---
+doc_search_script = """
+window.addEventListener("DOMContentLoaded", () => {
+  const params = new URLSearchParams(window.location.search);
+  const term = decodeURIComponent(params.get("highlight") || "");
+
+  const searchBox = document.createElement("div");
+  searchBox.className = "search-banner";
+  searchBox.innerHTML = `
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <input id="doc-search" type="text" placeholder="Search within this document..."
+        style="flex:1;min-width:200px;padding:6px 10px;background:#2a2a2a;color:#eee;border:1px solid #444;border-radius:3px;font-size:14px;font-family:sans-serif;"
+        value="` + term + `">
+      <button id="doc-search-btn" style="padding:6px 14px;background:#cc0000;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:14px;font-family:sans-serif;">Find</button>
+      <span id="match-count" style="font-size:13px;color:#888;font-family:sans-serif;"></span>
+    </div>`;
+  document.querySelector(".doc-container").insertBefore(searchBox, document.querySelector(".doc-container").firstChild);
+
+  const content = document.getElementById("content");
+
+  window.searchInPage = function() {
+    const query = document.getElementById("doc-search").value.trim();
+    
+    // 1. Clear old highlights safely
+    const marks = content.querySelectorAll('mark.doc-highlight');
+    marks.forEach(mark => {
+        const parent = mark.parentNode;
+        parent.replaceChild(document.createTextNode(mark.textContent), mark);
+        parent.normalize();
+    });
+
+    if (!query) {
+        document.getElementById("match-count").textContent = "";
+        return;
+    }
+
+    // 2. TreeWalker: Safely find text without breaking HTML tags
+    const walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT, null, false);
+    const nodes = [];
+    let node;
+    while (node = walker.nextNode()) {
+        if (node.nodeValue.toLowerCase().includes(query.toLowerCase())) {
+            nodes.push(node);
+        }
+    }
+
+    let matchCount = 0;
+    nodes.forEach(textNode => {
+        const text = textNode.nodeValue;
+        const escapedQuery = query.replace(/[-/\\\\^$*+?.()|[\\]{}]/g, '\\\\$&');
+        const regex = new RegExp(`(${escapedQuery})`, 'gi');
+        
+        const fragment = document.createDocumentFragment();
+        let lastIdx = 0;
+        let match;
+        
+        while ((match = regex.exec(text)) !== null) {
+            matchCount++;
+            const before = text.slice(lastIdx, match.index);
+            if (before) fragment.appendChild(document.createTextNode(before));
+            
+            const mark = document.createElement('mark');
+            mark.className = 'doc-highlight';
+            mark.style.cssText = 'background:#cc0000;color:#fff;border-radius:2px;padding:0 2px;';
+            mark.textContent = match[0];
+            fragment.appendChild(mark);
+            
+            lastIdx = regex.lastIndex;
+        }
+        
+        const after = text.slice(lastIdx);
+        if (after) fragment.appendChild(document.createTextNode(after));
+        
+        textNode.parentNode.replaceChild(fragment, textNode);
+    });
+
+    const first = content.querySelector(".doc-highlight");
+    if (first) first.scrollIntoView({behavior: "smooth", block: "center"});
+    
+    document.getElementById("match-count").textContent = matchCount > 0 ? matchCount + " match" + (matchCount > 1 ? "es" : "") : "No matches";
+  };
+
+  document.getElementById("doc-search-btn").addEventListener("click", searchInPage);
+  document.addEventListener("keydown", e => {
+    if (e.key === "Enter" && document.activeElement.id === "doc-search") searchInPage();
+  });
+
+  if (term) searchInPage();
+});
+"""
+
 for folder_path, collection_name in collections.items():
     if not os.path.exists(folder_path):
         print(f"WARNING: Could not find folder: {folder_path}")
@@ -73,36 +164,28 @@ for folder_path, collection_name in collections.items():
                         if block_text:
                             full_text += block_text + "\n\n"
             else:
-                # COLUMN-AWARE EXTRACTION FOR KUDI ARASU
                 for page in doc:
                     blocks = page.get_text("blocks")
-                    mid_x = page.rect.width / 2  # Find the physical center of the page
+                    mid_x = page.rect.width / 2 
                     
                     left_col = []
                     right_col = []
                     
                     for b in blocks:
-                        if b[6] == 0: # Ensure it is a text block, not an image
-                            # Sort block into left or right column based on its starting X coordinate
+                        if b[6] == 0: 
                             if b[0] < mid_x:
                                 left_col.append(b)
                             else:
                                 right_col.append(b)
                     
-                    # Sort blocks vertically (Y coordinate) within each column
                     left_col.sort(key=lambda b: b[1])
                     right_col.sort(key=lambda b: b[1])
                     
-                    # Read all of the left column, then all of the right column
                     for block in (left_col + right_col):
                         block_text = block[4].strip()
-                        
-                        # Since titles and paragraphs are isolated in their own blocks,
-                        # we can safely swap the internal newlines for spaces to fix CSS wrapping.
                         clean_text = block_text.replace("\n", " ")
                         
                         if clean_text:
-                            # Re-add the double newline to preserve spacing between titles/paragraphs
                             full_text += clean_text + "\n\n"
             doc.close()
         except Exception as e:
@@ -124,7 +207,6 @@ for folder_path, collection_name in collections.items():
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script data-goatcounter="https://periyararchive.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js"></script>
 <title>{display_title} — Periyar Archive</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@400;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -184,12 +266,6 @@ for folder_path, collection_name in collections.items():
     line-height: 1.9;
     color: #ddd;
   }}
-  .doc-highlight {{
-    background: #cc0000;
-    color: #fff;
-    border-radius: 2px;
-    padding: 0 2px;
-  }}
   .search-banner {{
     background: #1e1e1e;
     border-left: 3px solid #cc0000;
@@ -201,57 +277,7 @@ for folder_path, collection_name in collections.items():
   }}
 </style>
 <script>
-window.addEventListener("DOMContentLoaded", () => {{
-  const params = new URLSearchParams(window.location.search);
-  const term = decodeURIComponent(params.get("highlight") || "");
-
-  const searchBox = document.createElement("div");
-  searchBox.className = "search-banner";
-  searchBox.innerHTML = `
-    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-      <input id="doc-search" type="text" placeholder="Search within this document..."
-        style="flex:1;min-width:200px;padding:6px 10px;background:#2a2a2a;color:#eee;border:1px solid #444;border-radius:3px;font-size:14px;font-family:sans-serif;"
-        value="${{term}}">
-      <button id="doc-search-btn" style="padding:6px 14px;background:#cc0000;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:14px;font-family:sans-serif;">Find</button>
-      <span id="match-count" style="font-size:13px;color:#888;font-family:sans-serif;"></span>
-    </div>`;
-  document.querySelector(".doc-container").insertBefore(searchBox, document.querySelector(".doc-container").firstChild);
-
-  const content = document.getElementById("content");
-  const markInstance = new Mark(content);
-
-  window.searchInPage = function() {{
-    const query = document.getElementById("doc-search").value.trim();
-    
-    // Clear old highlights safely
-    markInstance.unmark({{
-      done: function() {{
-        if (!query) {{
-          document.getElementById("match-count").textContent = "";
-          return;
-        }}
-        
-        // Add new highlights safely
-        markInstance.mark(query, {{
-          className: "doc-highlight",
-          done: function(totalMatches) {{
-            const first = content.querySelector(".doc-highlight");
-            if (first) first.scrollIntoView({{behavior: "smooth", block: "center"}});
-            
-            document.getElementById("match-count").textContent = totalMatches > 0 ? `${{totalMatches}} match${{totalMatches > 1 ? "es" : ""}}` : "No matches";
-          }}
-        }});
-      }}
-    }});
-  }};
-
-  document.getElementById("doc-search-btn").addEventListener("click", searchInPage);
-  document.addEventListener("keydown", e => {{
-    if (e.key === "Enter" && document.activeElement.id === "doc-search") searchInPage();
-  }});
-
-  if (term) searchInPage();
-}});
+{doc_search_script}
 </script>
 </head>
 <body>
@@ -382,10 +408,11 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
 <div class="main">
   <p class="description" style="margin-top:28px;">Search across the collected volumes of Periyar's writings published by V Anaimuthu (1974 edition) and the Kudi Arasu and Revolt collections published by Kolathur Mani.</p>
   <div id="search"></div>
-  <script src="/pagefind/pagefind-ui.js" defer></script>
+  
+  <script src="/pagefind/pagefind-ui.js"></script>
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
   <script>
     window.addEventListener('DOMContentLoaded', () => {
-      // 1. Initialize Pagefind
       new PagefindUI({
         element: "#search",
         showImages: false,
@@ -404,87 +431,60 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
           searching: "Searching for [SEARCH_TERM]..."
         }
       });
-
-      // 2. Device Check
-      const isDesktop = window.innerWidth > 768 && !(/Mobi|Android/i.test(navigator.userAgent));
-
-      if (isDesktop) {
-        const checkExist = setInterval(function() {
-          const searchInput = document.querySelector('#search input');
-          if (searchInput) {
-            clearInterval(checkExist);
-
-            // 3. Create the Toggle Button UI
-            const toggleContainer = document.createElement('div');
-            toggleContainer.style.cssText = 'display: flex; justify-content: flex-end; margin-bottom: 8px;';
-            
-            const toggleBtn = document.createElement('button');
-            toggleBtn.innerHTML = 'Keyboard: <strong>தமிழ் (ON)</strong>';
-            toggleBtn.style.cssText = 'background: transparent; color: #cc0000; border: 1px solid #cc0000; padding: 4px 12px; border-radius: 3px; font-family: sans-serif; font-size: 12px; cursor: pointer; transition: 0.2s;';
-            
-            toggleContainer.appendChild(toggleBtn);
-            const searchDiv = document.getElementById('search');
-            searchDiv.parentNode.insertBefore(toggleContainer, searchDiv);
-
-            // Toggle Logic
-            let isTamil = true;
-            toggleBtn.addEventListener('click', (e) => {
-              e.preventDefault();
-              isTamil = !isTamil;
-              toggleBtn.innerHTML = isTamil ? 'Keyboard: <strong>தமிழ் (ON)</strong>' : 'Keyboard: <strong>English (ON)</strong>';
-              toggleBtn.style.color = isTamil ? '#cc0000' : '#aaa';
-              toggleBtn.style.borderColor = isTamil ? '#cc0000' : '#555';
-              searchInput.focus();
-            });
-
-            // 4. Bulletproof JSONP Transliteration (Bypasses Browser CORS Blocks)
-            function transliterate(text) {
-              return new Promise((resolve) => {
-                if (!text.trim() || !/[a-zA-Z]/.test(text)) {
-                  resolve(text);
-                  return;
-                }
-                const script = document.createElement('script');
-                const cbName = 'jsonp_cb_' + Math.round(100000 * Math.random());
-                
-                window[cbName] = function(data) {
-                  delete window[cbName];
-                  document.body.removeChild(script);
-                  if (data && data[0] === 'SUCCESS') {
-                    resolve(data[1][0][1][0]);
-                  } else {
-                    resolve(text);
-                  }
-                };
-                
-                script.onerror = function() { resolve(text); };
-                script.src = `https://inputtools.google.com/request?text=${text}&itc=ta-t-i0-und&num=1&cp=0&cs=1&ie=utf-8&oe=utf-8&app=demopage&cb=${cbName}`;
-                document.body.appendChild(script);
-              });
-            }
-
-            // 5. Listen for Spacebar or Enter
-            searchInput.addEventListener('keyup', async (e) => {
-              if (!isTamil) return;
-              
-              if (e.key === ' ' || e.key === 'Enter') {
-                const words = searchInput.value.split(' ');
-                const targetIndex = e.key === ' ' ? words.length - 2 : words.length - 1;
-                const wordToTranslate = words[targetIndex];
-
-                if (wordToTranslate && /[a-zA-Z]/.test(wordToTranslate)) {
-                  const tamilWord = await transliterate(wordToTranslate);
-                  words[targetIndex] = tamilWord;
-                  searchInput.value = words.join(' ');
-                  searchInput.dispatchEvent(new Event('input', { bubbles: true }));
-                }
-              }
-            });
-          }
-        }, 100);
-      }
     });
+
+    const isDesktop = window.innerWidth > 768 && !(/Mobi|Android/i.test(navigator.userAgent));
+
+    if (isDesktop) {
+        google.load("elements", "1", { packages: "transliteration" });
+        google.setOnLoadCallback(function() {
+            const checkExist = setInterval(function() {
+                const searchInput = document.querySelector('#search input');
+                if (searchInput) {
+                    clearInterval(checkExist);
+
+                    const toggleContainer = document.createElement('div');
+                    toggleContainer.style.cssText = 'display: flex; justify-content: flex-end; margin-bottom: 8px;';
+                    
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = 'Keyboard: <strong>தமிழ் (ON)</strong>';
+                    toggleBtn.style.cssText = 'background: transparent; color: #cc0000; border: 1px solid #cc0000; padding: 4px 12px; border-radius: 3px; font-family: sans-serif; font-size: 12px; cursor: pointer; transition: 0.2s;';
+                    
+                    toggleContainer.appendChild(toggleBtn);
+                    const searchDiv = document.getElementById('search');
+                    searchDiv.parentNode.insertBefore(toggleContainer, searchDiv);
+
+                    const options = {
+                        sourceLanguage: google.elements.transliteration.LanguageCode.ENGLISH,
+                        destinationLanguage: [google.elements.transliteration.LanguageCode.TAMIL],
+                        shortcutKey: 'ctrl+m',
+                        transliterationEnabled: true
+                    };
+                    
+                    const control = new google.elements.transliteration.TransliterationControl(options);
+                    control.makeTransliteratable([searchInput]);
+
+                    toggleBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        if (control.isTransliterationEnabled()) {
+                            control.disableTransliteration();
+                            toggleBtn.innerHTML = 'Keyboard: <strong>English (ON)</strong>';
+                            toggleBtn.style.color = '#aaa';
+                            toggleBtn.style.borderColor = '#555';
+                        } else {
+                            control.enableTransliteration();
+                            toggleBtn.innerHTML = 'Keyboard: <strong>தமிழ் (ON)</strong>';
+                            toggleBtn.style.color = '#cc0000';
+                            toggleBtn.style.borderColor = '#cc0000';
+                        }
+                        searchInput.focus();
+                    });
+                }
+            }, 100);
+        });
+    }
   </script>
+
   <p class="notes"><strong>Note for Tamil searches:</strong> The search may return words sharing similar characters. For example, a search for "மானம்" might also return results including "மேன்மை".</p>
   <p class="contact">For questions or feedback: <a href="mailto:contact@periyararchive.in">contact@periyararchive.in</a></p>
   <hr>
