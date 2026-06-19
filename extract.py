@@ -212,6 +212,7 @@ for folder_path, collection_name in collections.items():
 <meta name="twitter:title" content="{display_title} — Periyar Archive" />
 <meta name="twitter:description" content="A full-text searchable archive of Periyar E.V. Ramasamy's writings." />
 <meta name="twitter:image" content="https://periyararchive.in/thumbnail.png" />
+<link rel="icon" type="image/png" href="/favicon.png">
 
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@400;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet"><style>
   * {{ box-sizing: border-box; margin: 0; padding: 0; }}
@@ -266,6 +267,7 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
 <meta name="twitter:title" content="பெரியார் தேடகம் — Periyar Archive" />
 <meta name="twitter:description" content="A full-text searchable archive of Periyar E.V. Ramasamy's writings." />
 <meta name="twitter:image" content="https://periyararchive.in/thumbnail.png" />
+<link rel="icon" type="image/png" href="/favicon.png">
 
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@400;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
 <link href="/pagefind/pagefind-ui.css" rel="stylesheet">
@@ -443,6 +445,7 @@ about_html = """<!DOCTYPE html>
 <meta name="twitter:title" content="About — Periyar Archive" />
 <meta name="twitter:description" content="A full-text searchable archive of Periyar E.V. Ramasamy's writings." />
 <meta name="twitter:image" content="https://periyararchive.in/thumbnail.png" />
+<link rel="icon" type="image/png" href="/favicon.png">
 
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@400;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
 <style>
