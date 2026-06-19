@@ -205,13 +205,13 @@ for folder_path, collection_name in collections.items():
 
 <meta property="og:title" content="{display_title} — Periyar Archive" />
 <meta property="og:description" content="A full-text searchable archive of Periyar E.V. Ramasamy's writings." />
-<meta property="og:image" content="https://periyararchive.in/thumbnail.jpg" />
+<meta property="og:image" content="https://periyararchive.in/thumbnail.png" />
 <meta property="og:url" content="https://periyararchive.in/" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="{display_title} — Periyar Archive" />
 <meta name="twitter:description" content="A full-text searchable archive of Periyar E.V. Ramasamy's writings." />
-<meta name="twitter:image" content="https://periyararchive.in/thumbnail.jpg" />
+<meta name="twitter:image" content="https://periyararchive.in/thumbnail.png" />
 
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@400;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet"><style>
   * {{ box-sizing: border-box; margin: 0; padding: 0; }}
@@ -259,13 +259,13 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
 
 <meta property="og:title" content="பெரியார் தேடகம் — Periyar Archive" />
 <meta property="og:description" content="A full-text searchable archive of Periyar E.V. Ramasamy's writings." />
-<meta property="og:image" content="https://periyararchive.in/thumbnail.jpg" />
+<meta property="og:image" content="https://periyararchive.in/thumbnail.png" />
 <meta property="og:url" content="https://periyararchive.in/" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="பெரியார் தேடகம் — Periyar Archive" />
 <meta name="twitter:description" content="A full-text searchable archive of Periyar E.V. Ramasamy's writings." />
-<meta name="twitter:image" content="https://periyararchive.in/thumbnail.jpg" />
+<meta name="twitter:image" content="https://periyararchive.in/thumbnail.png" />
 
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@400;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
 <link href="/pagefind/pagefind-ui.css" rel="stylesheet">
@@ -436,13 +436,13 @@ about_html = """<!DOCTYPE html>
 
 <meta property="og:title" content="About — Periyar Archive" />
 <meta property="og:description" content="A full-text searchable archive of Periyar E.V. Ramasamy's writings." />
-<meta property="og:image" content="https://periyararchive.in/thumbnail.jpg" />
+<meta property="og:image" content="https://periyararchive.in/thumbnail.png" />
 <meta property="og:url" content="https://periyararchive.in/about.html" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="About — Periyar Archive" />
 <meta name="twitter:description" content="A full-text searchable archive of Periyar E.V. Ramasamy's writings." />
-<meta name="twitter:image" content="https://periyararchive.in/thumbnail.jpg" />
+<meta name="twitter:image" content="https://periyararchive.in/thumbnail.png" />
 
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@400;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
 <style>
