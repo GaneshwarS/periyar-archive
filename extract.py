@@ -202,8 +202,18 @@ for folder_path, collection_name in collections.items():
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script data-goatcounter="https://periyararchive.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <title>{display_title} — Periyar Archive</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@400;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
-<style>
+
+<meta property="og:title" content="{display_title} — Periyar Archive" />
+<meta property="og:description" content="A full-text searchable archive of Periyar E.V. Ramasamy's writings." />
+<meta property="og:image" content="https://periyararchive.in/thumbnail.jpg" />
+<meta property="og:url" content="https://periyararchive.in/" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="{display_title} — Periyar Archive" />
+<meta name="twitter:description" content="A full-text searchable archive of Periyar E.V. Ramasamy's writings." />
+<meta name="twitter:image" content="https://periyararchive.in/thumbnail.jpg" />
+
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@400;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet"><style>
   * {{ box-sizing: border-box; margin: 0; padding: 0; }}
   body {{ font-family: 'Noto Serif Tamil', 'Noto Serif', serif; background: #111; color: #ddd; line-height: 1.8; }}
   header {{ background: #111; color: #fff; padding: 14px 30px; display: flex; align-items: center; gap: 20px; border-bottom: 2px solid #cc0000; }}
@@ -246,6 +256,17 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script data-goatcounter="https://periyararchive.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <title>பெரியார் தேடகம் — Periyar Archive</title>
+
+<meta property="og:title" content="பெரியார் தேடகம் — Periyar Archive" />
+<meta property="og:description" content="A full-text searchable archive of Periyar E.V. Ramasamy's writings." />
+<meta property="og:image" content="https://periyararchive.in/thumbnail.jpg" />
+<meta property="og:url" content="https://periyararchive.in/" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="பெரியார் தேடகம் — Periyar Archive" />
+<meta name="twitter:description" content="A full-text searchable archive of Periyar E.V. Ramasamy's writings." />
+<meta name="twitter:image" content="https://periyararchive.in/thumbnail.jpg" />
+
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@400;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
 <link href="/pagefind/pagefind-ui.css" rel="stylesheet">
 <style>
@@ -377,8 +398,8 @@ with open("docs/index.html", "w", encoding="utf-8") as f:
   <p class="notes"><strong>Note for Tamil searches:</strong> The search may return words sharing similar characters. For example, a search for "மானம்" might also return results including "மேன்மை".</p>
   <p class="contact">For questions or feedback: <a href="mailto:contact@periyararchive.in">contact@periyararchive.in</a></p>
   <hr>
-  <h2 id="browse-heading">&#9654; Browse Documents <small style="font-size:0.75em;font-weight:normal;color:#666;">click to expand</small></h2>
   <p style="font-family:sans-serif;font-size:0.9em;margin-bottom:16px;"><a href="https://theperiyarproject.wordpress.com/2022/09/17/a-periyar-reading-list/" target="_blank" style="color:#aaa;text-decoration:underline;">&#9654; For more on Periyar: A Periyar Reading List</a></p>
+  <h2 id="browse-heading">&#9654; Browse Documents <small style="font-size:0.75em;font-weight:normal;color:#666;">click to expand</small></h2>
   <ul id="browse-list" style="display:none;">
 """)
     for out_filename, display_title, collection_name in index_links:
@@ -412,6 +433,17 @@ about_html = """<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script data-goatcounter="https://periyararchive.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <title>About — Periyar Archive</title>
+
+<meta property="og:title" content="About — Periyar Archive" />
+<meta property="og:description" content="A full-text searchable archive of Periyar E.V. Ramasamy's writings." />
+<meta property="og:image" content="https://periyararchive.in/thumbnail.jpg" />
+<meta property="og:url" content="https://periyararchive.in/about.html" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="About — Periyar Archive" />
+<meta name="twitter:description" content="A full-text searchable archive of Periyar E.V. Ramasamy's writings." />
+<meta name="twitter:image" content="https://periyararchive.in/thumbnail.jpg" />
+
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@400;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
