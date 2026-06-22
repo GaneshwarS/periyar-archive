@@ -4,7 +4,7 @@ import time
 import anthropic
 
 # --- CONFIGURATION ---
-API_KEY = "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"  
+API_KEY = "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"  
 DOCS_DIR = "docs"
 BACKUP_DIR = "ocr_backup"
 CHUNK_SIZE = 20000  # characters per API call

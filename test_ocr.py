@@ -1,7 +1,7 @@
 import os
 import anthropic
 
-API_KEY = "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"
+API_KEY = "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"
 client = anthropic.Anthropic(api_key=API_KEY)
 
 # Test on just the Revolt file (English, easy to verify)
