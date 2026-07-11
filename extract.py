@@ -126,7 +126,7 @@ window.addEventListener("DOMContentLoaded", () => {
       document.getElementById("match-count").textContent = "";
       return;
     }
-    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const escaped = query.split('').map(c => '[\\^$.|?*+(){}'.includes(c) ? '\\' + c : c).join('');
     const regex = new RegExp("(" + escaped + ")", "gi");
     content.innerHTML = content.innerHTML.replace(regex, `<mark class="doc-highlight" style="background:#cc0000;color:#fff;border-radius:2px;padding:0 2px;">$1</mark>`);
     const first = content.querySelector(".doc-highlight");
