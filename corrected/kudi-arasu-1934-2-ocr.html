@@ -101,7 +101,7 @@ window.addEventListener("DOMContentLoaded", () => {
         parent.normalize();
     });
     const escaped = query.replace(/[.*+?^${}()|[\]\]/g, "\$&");
-    const regex = new RegExp(escaped, "gi");
+    const regex = new RegExp("(" + escaped + ")", "gi");
     content.innerHTML = content.innerHTML.replace(regex, match => `<mark class="doc-highlight" style="background:#cc0000;color:#fff;border-radius:2px;padding:0 2px;">${match}</mark>`);
     const first = content.querySelector(".doc-highlight");
     if (first) first.scrollIntoView({behavior: "smooth", block: "center"});
