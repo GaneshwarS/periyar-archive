@@ -31,7 +31,7 @@ else:
 
             if corr_start != -1 and doc_start != -1:
                 # Grab your typo-corrected text block
-                content_to_keep = corr_html[corr_start + 18 : corr_html.rfind('</div>')]
+                content_to_keep = corr_html[corr_start + 18 : corr_html.find('</div>', corr_start + 18)]
                 
                 # Stitch your text into the perfect layout
                 new_doc = doc_html[:doc_start + 18] + content_to_keep + "\n</div>\n</div>\n</body>\n</html>"
