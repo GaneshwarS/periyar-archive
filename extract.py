@@ -2,8 +2,8 @@ import fitz
 import os
 
 collections = {
-    "E:/Read/Books/Periyar/Anaimuthu Volumes/OCR-ed": "Anaimuthu's Periyar Collection",
-    "E:/Read/Books/Periyar/Kudi Arasu/OCR-ed": "Kolathur Mani – Kudi Arasu Collection"
+    "D:/Read/Books/Periyar/Anaimuthu Volumes/OCR-ed": "Anaimuthu's Periyar Collection",
+    "D:/Read/Books/Periyar/Kudi Arasu/OCR-ed": "Kolathur Mani – Kudi Arasu Collection"
 }
 
 title_map = {
